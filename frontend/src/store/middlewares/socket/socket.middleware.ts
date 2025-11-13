@@ -1,11 +1,11 @@
+import { SocketEvent, UserKey } from 'common/enums/enums';
 import {
   Middleware,
-  RoomDto,
-  UserDto,
   ParticipantIdDto,
+  RoomDto,
   RoomIdDto,
+  UserDto,
 } from 'common/types/types';
-import { SocketEvent, UserKey } from 'common/enums/enums';
 import { socket as socketService } from 'services/services';
 import { racing as racingActions } from 'store/modules/actions';
 

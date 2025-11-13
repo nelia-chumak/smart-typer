@@ -1,8 +1,10 @@
 ls:
   .dir: regex:([.a-z0-9]*)([-.][a-z]+)*
-  .scss: regex:([.a-z0-9]*)([-.][a-z]+)*
+  .scss: regex:([.a-z0-9_]*)([-.][a-z]+)*
   .ts: regex:([.a-z0-9]*)([-.][a-z]+)*
   backend/src/data/migrations:
+    .ts: snake_case
+  backend/src/data/seeds:
     .ts: snake_case
 
 ignore:

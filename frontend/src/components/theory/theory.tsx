@@ -29,21 +29,18 @@ const Theory: FC = () => {
         title="Swift and Stealthy Typing"
         imageSrc={typingOnTopOfTheWorldImg}
         imageAlignment={ImageAlignment.RIGHT}
-        // eslint-disable-next-line max-len
         text="In this digital era, efficient typing is paramount. It forms the core of our interaction with computers. Typing swiftly, and more impressively, blindly - without glancing at your keyboard - offers immense benefits. It enhances speed, efficiency, and keeps your focus on the screen, fostering a smoother workflow."
       />
       <Block
         title="Embracing Correct Techniques"
         imageSrc={typingOnLaptopImg}
         imageAlignment={ImageAlignment.LEFT}
-        // eslint-disable-next-line max-len
         text="As in any skill, effective typing begins with mastering correct techniques. It starts with how you place your hands. On a QWERTY keyboard, your fingers should be placed on the 'home row' – that's the middle row of the keyboard, starting with the letters A to L. Each finger is responsible for reaching certain keys, reducing the distance they have to move and improving typing efficiency. Proper finger positioning, understanding of key mapping, and maintaining the correct posture during typing sessions are crucial for building speed and reducing fatigue. This doesn't only apply to the fingers, wrists and arms also need to be positioned correctly to avoid stress injuries."
       />
       <Block
         title="Practice for Perfection"
         imageSrc={schedulingPracticeImg}
         imageAlignment={ImageAlignment.RIGHT}
-        // eslint-disable-next-line max-len
         text="Having learned the basics, the key to mastering fast and touch typing is consistent practice. However, this shouldn't be aimless repetition. It's crucial to have a structured practice regime that focuses on gradual skill improvement. There are a few steps to guide your practice below."
       >
         <ol className={styles.suggestions} role="list">
@@ -121,14 +118,12 @@ const Theory: FC = () => {
         title="Personalizing Your Typing Experience"
         imageSrc={comfortWorkspaceImg}
         imageAlignment={ImageAlignment.LEFT}
-        // eslint-disable-next-line max-len
         text="Each individual's typing experience is unique, shaped by personal preferences and comfort. You may prefer a mechanical keyboard over a membrane one, or you may find that certain shortcut keys don't suit your workflow. By adapting your typing methods to your comfort, you can significantly enhance your skills. This includes personalizing your keyboard settings, learning and using shortcut keys, and organizing your workspace for optimal ergonomics."
       />
       <Block
         title="Elevating Your Typing Skills"
         imageSrc={climbsUpKeyboardImg}
         imageAlignment={ImageAlignment.RIGHT}
-        // eslint-disable-next-line max-len
         text="Once you've mastered the basics, it's time to level up. There are always new skills to learn, from working with complex characters like numbers and symbols, to managing multitasking, to navigating without a mouse. You'll also learn about important typing metrics and how to use them to measure your progress and set personal goals."
       />
     </ContentWrapper>

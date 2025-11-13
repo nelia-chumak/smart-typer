@@ -1,11 +1,11 @@
-import { createAction, createAsyncThunk } from 'store/external/external';
+import { UserKey } from 'common/enums/enums';
 import {
+  UpdateAvatarResponseDto,
   UserDto,
   UserIdDto,
   UserProfileInfoResponseDto,
-  UpdateAvatarResponseDto,
 } from 'common/types/types';
-import { UserKey } from 'common/enums/enums';
+import { createAction, createAsyncThunk } from 'store/external/external';
 import { ActionType } from './action-type';
 
 class Profile {

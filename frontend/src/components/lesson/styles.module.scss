@@ -1,10 +1,10 @@
-@import 'src/assets/css/variables';
+@use 'assets/css/variables' as *;
 
 .lesson {
-  width: 100%;
-  height: calc(100vh - 60px);
   display: grid;
   grid-template-columns: 1fr 1.5fr 1fr;
+  width: 100%;
+  height: calc(100vh - 60px);
 
   .info {
     margin: 3rem;

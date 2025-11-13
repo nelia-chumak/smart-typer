@@ -1,11 +1,11 @@
-import { yup } from 'dependencies/dependencies';
-import { ValidationErrorMessage } from 'common/enums/enums';
 import {
   MAX_COUNTDOWN_BEFORE_GAME,
   MAX_GAME_TIME,
   MIN_COUNTDOWN_BEFORE_GAME,
   MIN_GAME_TIME,
-} from 'common/constants/constants';
+} from 'common/constants/constants.js';
+import { ValidationErrorMessage } from 'common/enums/enums.js';
+import { yup } from 'dependencies/dependencies.js';
 
 const updateSettingsSchema = yup
   .object()

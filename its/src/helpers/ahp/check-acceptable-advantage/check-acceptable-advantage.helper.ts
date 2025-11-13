@@ -1,4 +1,4 @@
-import { AlternativePrioritiesVector } from 'common/types/types';
+import { AlternativePrioritiesVector } from 'common/types/types.js';
 
 const checkAcceptableAdvantage = (
   globalPrioritiesWithIds: AlternativePrioritiesVector,

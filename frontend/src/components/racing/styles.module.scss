@@ -1,21 +1,22 @@
-@import 'src/assets/css/variables';
+@use 'assets/css/variables' as *;
 
 .racingModalDialog {
   max-width: 45vw !important;
 
   .modeCards {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
   }
 }
 
 .racing {
-  height: calc(100% - 3rem);
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
   align-items: center;
+  justify-content: flex-end;
+
+  height: calc(100% - 3rem);
 
   .carRacing {
     display: flex;
@@ -25,14 +26,17 @@
   }
 
   .openModalButton {
-    font-size: $extra-large-font-size;
-    height: 6.5rem;
-    min-width: 60rem;
     display: flex;
-    justify-content: center;
     align-items: center;
-    background-color: $white;
-    color: $black;
+    justify-content: center;
+
+    min-width: 60rem;
+    height: 6.5rem;
     border: 3px solid $black;
+
+    font-size: $extra-large-font-size;
+    color: $black;
+
+    background-color: $white;
   }
 }

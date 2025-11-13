@@ -1,1 +1,1 @@
-export type { AnySchema, AnyObjectSchema } from 'yup';
+export type { AnyObjectSchema, AnySchema } from 'yup';

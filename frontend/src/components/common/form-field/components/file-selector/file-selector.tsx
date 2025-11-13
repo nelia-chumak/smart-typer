@@ -1,11 +1,11 @@
 import { FormFieldType } from 'common/enums/enums';
-import { RBForm } from 'components/external/external';
 import {
   FC,
-  UseFormRegisterReturn,
   FieldError,
   RefObject,
+  UseFormRegisterReturn,
 } from 'common/types/types';
+import { RBForm } from 'components/external/external';
 
 type Props = {
   placeholder?: string;
@@ -14,7 +14,7 @@ type Props = {
   className?: string;
   value?: string;
   readOnly: boolean;
-  inputRef?: RefObject<HTMLInputElement>;
+  inputRef?: RefObject<HTMLInputElement | null>;
   hidden?: boolean;
 };
 

@@ -1,6 +1,6 @@
-import { FC } from 'common/types/types';
-import { clsx } from 'helpers/helpers';
 import { ContentWrapperShadow, ContentWrapperSize } from 'common/enums/enums';
+import { FC, JSX } from 'common/types/types';
+import { clsx } from 'helpers/helpers';
 
 import styles from './styles.module.scss';
 

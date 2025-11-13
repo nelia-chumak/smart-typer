@@ -1,9 +1,9 @@
-import { Sign, FormField } from 'components/common/common';
-import { resetPasswordSchema } from 'validation-schemas/validation-schemas';
 import { FormFieldLabel, FormFieldType, UserKey } from 'common/enums/enums';
 import { FC, ResetPasswordRequestDto } from 'common/types/types';
-import { useForm, useDispatch, useSelector } from 'hooks/hooks';
+import { FormField, Sign } from 'components/common/common';
+import { useDispatch, useForm, useSelector } from 'hooks/hooks';
 import { auth as authActions } from 'store/modules/actions';
+import { resetPasswordSchema } from 'validation-schemas/validation-schemas';
 
 const ResetPassword: FC = () => {
   const dispatch = useDispatch();
@@ -22,7 +22,7 @@ const ResetPassword: FC = () => {
   const handleSubmitForm = async (
     data: ResetPasswordRequestDto,
   ): Promise<void> => {
-    dispatch(authActions.resetPassword(data));
+     dispatch(authActions.resetPassword(data));
   };
 
   return (

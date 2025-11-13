@@ -1,9 +1,9 @@
-@import 'src/assets/css/variables';
+@use 'assets/css/variables' as *;
 
 .label {
-  font-size: $small-font-size;
-  border-radius: 2.5rem;
   padding: 0 0.5rem;
+  border-radius: 2.5rem;
+  font-size: $small-font-size;
 
   &.blue {
     background: $blue-accent;

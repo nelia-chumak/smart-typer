@@ -1,4 +1,4 @@
-import { AhpLesson } from 'common/types/types';
+import { AhpLesson } from 'common/types/types.js';
 
 const calculateSimilarityCriterion = (
   lastFinishedLessons: AhpLesson[],

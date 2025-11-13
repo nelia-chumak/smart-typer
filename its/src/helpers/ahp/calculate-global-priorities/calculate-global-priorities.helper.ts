@@ -1,5 +1,5 @@
 import * as math from 'mathjs';
-import { PrioritiesVector } from 'common/types/types';
+import { PrioritiesVector } from 'common/types/types.js';
 
 const calculateGlobalPriorities = (
   criterionLocalPriorities: PrioritiesVector,

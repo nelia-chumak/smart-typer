@@ -1,24 +1,27 @@
 {
   "name": "its",
   "private": true,
-  "version": "0.0.1",
   "engines": {
-    "node": ">=16 <17",
-    "npm": ">=8 <9"
+    "node": ">=25 <26",
+    "npm": ">=11 <12"
+  },
+  "type": "module",
+  "exports": {
+    "./*": "./*.js"
   },
   "scripts": {
     "lint:ts": "npx eslint \"src/**/*.ts\"",
     "lint": "npm run lint:ts",
     "build:ts": "tsc && tsc-alias -p tsconfig.json",
-    "build": "rm -rf build && npm run build:ts && cp -r node_modules package.json package-lock.json build"
+    "build": "rm -rf build && npm run build:ts && cp -r package.json build"
   },
   "devDependencies": {
-    "tsc-alias": "1.8.2",
-    "typescript": "4.3.5"
+    "tsc-alias": "1.8.16",
+    "typescript": "5.9.3"
   },
   "dependencies": {
     "lodash": "4.17.21",
-    "mathjs": "11.8.0",
+    "mathjs": "15.1.0",
     "smart-typer-shared": "file:../shared/build"
   }
 }

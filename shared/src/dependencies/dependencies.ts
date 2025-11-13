@@ -1,1 +1,1 @@
-export * from './yup/yup.dependency';
+export * from './yup/yup.dependency.js';

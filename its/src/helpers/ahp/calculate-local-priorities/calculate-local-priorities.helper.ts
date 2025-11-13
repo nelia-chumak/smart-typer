@@ -1,5 +1,5 @@
 import * as math from 'mathjs';
-import { PairwiseComparisonMatrix, PrioritiesVector } from 'common/types/types';
+import { PairwiseComparisonMatrix, PrioritiesVector } from 'common/types/types.js';
 
 const calculateLocalPriorities = (
   matrix: PairwiseComparisonMatrix,

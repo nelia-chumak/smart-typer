@@ -8,23 +8,18 @@ import {
   FC,
   SendRoomUrlToEmailsRequestDto,
   ShareRoomUrlDto,
+  Tag,
+  TagRenderer,
   VoidAction,
-  VoidCallback,
 } from 'common/types/types';
-import { clsx, replaceRouteIdParam } from 'helpers/helpers';
-import {
-  useNavigate,
-  useDispatch,
-  useForm,
-  useState,
-} from 'hooks/hooks';
 import { Button, FormField, Modal } from 'components/common/common';
-import { ReactMultiEmail } from 'components/external/external';
-import { validateReactMultiEmail } from 'helpers/helpers';
+
+import { ReactTags } from 'components/external/external';
+import { clsx, replaceRouteIdParam } from 'helpers/helpers';
+import { useDispatch, useForm, useNavigate, useState } from 'hooks/hooks';
 import { racing as racingActions } from 'store/modules/actions';
 import { sendShareRoomUrlSchema } from 'validation-schemas/validation-schemas';
 
-import 'react-multi-email/dist/style.css';
 import styles from './styles.module.scss';
 
 type Props = {
@@ -36,7 +31,12 @@ type Props = {
 
 type Emails = SendRoomUrlToEmailsRequestDto[ShareUrlKey.EMAILS];
 
-const ShareRoomModal: FC<Props> = ({ isVisible, onClose, shareRoomUrl, isRoomUrlSending }) => {
+const ShareRoomModal: FC<Props> = ({
+  isVisible,
+  onClose,
+  shareRoomUrl,
+  isRoomUrlSending,
+}) => {
   const [emailsInputFocused, setEmailsInputFocused] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -48,25 +48,31 @@ const ShareRoomModal: FC<Props> = ({ isVisible, onClose, shareRoomUrl, isRoomUrl
 
   const emails = watch(ShareUrlKey.EMAILS);
 
+  const setEmails = (next: Emails): void => {
+    setValue(ShareUrlKey.EMAILS as keyof SendRoomUrlToEmailsRequestDto, next);
+  };
+
   const handleSend = (data: SendRoomUrlToEmailsRequestDto): void => {
     dispatch(racingActions.sendRoomUrlToEmails(data));
   };
 
-  const handleGetLabel = (
-    email: Emails[number],
-    index: number,
-    removeEmail: VoidCallback<number>,
-  ): JSX.Element => {
-    const onClick = (): void => removeEmail(index);
-    return (
-      <div data-tag key={index} className={styles.email}>
-        {email}
-        <span data-tag-handle onClick={onClick}>
-          x
-        </span>
-      </div>
-    );
-  };
+  const handleRenderTag: TagRenderer = ({
+    classNames,
+    tag,
+    ...buttonProps
+  }) => (
+    <button
+      type="button"
+      className={clsx(classNames.tag, styles.email)}
+      data-tag
+      {...buttonProps}
+    >
+      <span className={classNames.tagName}>{tag.label}</span>
+      <span data-tag-handle aria-hidden>
+        ×
+      </span>
+    </button>
+  );
 
   const handleGoToCreatedRoom = (): void => {
     const shareRoomId = Number(shareRoomUrl.split('/').pop());
@@ -74,13 +80,29 @@ const ShareRoomModal: FC<Props> = ({ isVisible, onClose, shareRoomUrl, isRoomUrl
     navigate(route);
   };
 
-  const handleEmailsInputChange = (emails: Emails): void => {
-    setValue(ShareUrlKey.EMAILS as keyof SendRoomUrlToEmailsRequestDto, emails);
+  const selected: Tag[] = (emails ?? []).map((e) => ({ value: e, label: e }));
+
+  const handleValidateEmail = (email: string): boolean => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim());
+  };
+
+  const handleAdd = (tag: Tag): void => {
+    const email = (tag.label ?? '').trim();
+    if (!email) return;
+    if (!handleValidateEmail(email)) return;
+    if ((emails ?? []).includes(email)) return;
+    setEmails([...(emails ?? []), email]);
+  };
+
+  const handleDelete = (index: number): void => {
+    setEmails((emails ?? []).filter((_, i) => i !== index));
   };
 
   const handleToggleEmailsInputFocus = (): void => {
     setEmailsInputFocused((prev) => !prev);
   };
+
+  const suggestions: Tag[] = [];
 
   return (
     <Modal
@@ -111,19 +133,25 @@ const ShareRoomModal: FC<Props> = ({ isVisible, onClose, shareRoomUrl, isRoomUrl
         type={FormFieldType.CUSTOM}
         note={<span>* correctly entered emails are greyed out</span>}
       >
-        <ReactMultiEmail
-          placeholder="Enter emails which you want to send link to"
-          emails={emails}
+        <div
           className={clsx(
             styles.emailsInput,
             emailsInputFocused && styles.focused,
           )}
-          onChange={handleEmailsInputChange}
-          validateEmail={validateReactMultiEmail}
-          getLabel={handleGetLabel}
-          onFocus={handleToggleEmailsInputFocus}
-          onBlur={handleToggleEmailsInputFocus}
-        />
+          onFocusCapture={handleToggleEmailsInputFocus}
+          onBlurCapture={handleToggleEmailsInputFocus}
+        >
+          <ReactTags
+            suggestions={suggestions}
+            selected={selected}
+            onAdd={handleAdd}
+            onDelete={handleDelete}
+            onValidate={handleValidateEmail}
+            allowNew
+            placeholderText="Enter emails which you want to send link to"
+            renderTag={handleRenderTag}
+          />
+        </div>
       </FormField>
       <Button
         onClick={handleSubmit(handleSend)}

@@ -1,13 +1,15 @@
-@import 'src/assets/css/variables';
+@use 'assets/css/variables' as *;
 
 .modeCard {
-  width: 20vw;
-  border: $main-border;
-  transition: $button-transition;
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
   align-items: center;
+  justify-content: space-evenly;
+
+  width: 20vw;
+  border: $main-border;
+
+  transition: $button-transition;
 
   &:hover {
     box-shadow: $button-shadow;

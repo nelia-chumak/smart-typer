@@ -1,4 +1,4 @@
-@import 'src/assets/css/variables';
+@use 'assets/css/variables' as *;
 
 .settings {
   display: flex;
@@ -12,8 +12,8 @@
     .cards {
       display: flex;
       flex-wrap: wrap;
-      text-align: start;
       width: 100%;
+      text-align: start;
 
       .card {
         margin: 2rem;
@@ -34,15 +34,18 @@
     }
 
     .submitButton {
-      height: 3.5rem;
-      width: 12rem;
-      font-size: $middle-font-size;
-      margin: 1rem 0;
-      background-color: $main-green;
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
+
+      width: 12rem;
+      height: 3.5rem;
+      margin: 1rem 0;
+
+      font-size: $middle-font-size;
       color: $white;
+
+      background-color: $main-green;
     }
   }
 }

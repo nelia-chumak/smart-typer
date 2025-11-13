@@ -1,10 +1,10 @@
-@import 'src/assets/css/variables';
+@use 'assets/css/variables' as *;
 
 .room {
-  width: 100%;
-  height: calc(100vh - 60px);
   display: grid;
   grid-template-columns: 1fr 1.5fr 1fr;
+  width: 100%;
+  height: calc(100vh - 60px);
 
   .info {
     display: flex;
@@ -12,15 +12,18 @@
     margin: 3rem;
 
     .goBackButton {
-      height: 3.5rem;
-      width: 12rem;
-      font-size: $middle-font-size;
-      margin: 1rem 0;
-      background-color: $main-red;
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
+
+      width: 12rem;
+      height: 3.5rem;
+      margin: 1rem 0;
+
+      font-size: $middle-font-size;
       color: $white;
+
+      background-color: $main-red;
 
       &.disabled {
         background-color: $dark-red;
@@ -29,48 +32,52 @@
   }
 
   .commentator {
-    height: 100%;
     display: flex;
     flex-direction: column;
+    height: 100%;
 
     .speechBubble {
       position: relative;
+      transform: rotate(-4deg) rotateY(15deg);
+
+      width: 26rem;
+      height: 22rem;
       margin: 0.5em auto;
       margin: 4rem 4rem 0 2rem;
       padding: 1em;
-      width: 26rem;
-      height: 22rem;
       border-radius: 0.3rem;
-      transform: rotate(-4deg) rotateY(15deg);
-      background: $main-green;
-      text-align: center;
-      color: $dark-blue;
+
       font-size: $small-font-size;
+      color: $dark-blue;
+      text-align: center;
+
+      background: $main-green;
     }
-    .speechBubble:before,
-    .speechBubble:after {
+
+    .speechBubble::before,
+    .speechBubble::after {
+      content: '';
       position: absolute;
       z-index: -1;
-      content: '';
     }
-    .speechBubble:after {
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      border-radius: inherit;
+
+    .speechBubble::after {
+      inset: 0;
       transform: rotate(2deg) translate(0.35em, -0.15em) scale(1.02);
+      border-radius: inherit;
       background: $light-green;
     }
-    .speechBubble:before {
+
+    .speechBubble::before {
+      bottom: 0.25em;
+      left: 1.25em;
+      transform: rotate(45deg) skewX(75deg);
+
+      width: 0;
+      height: 1em;
       border: solid 0 transparent;
       border-right: solid 3.5em #f4fbfe;
       border-bottom: solid 0.25em #8ecea6;
-      bottom: 0.25em;
-      left: 1.25em;
-      width: 0;
-      height: 1em;
-      transform: rotate(45deg) skewX(75deg);
     }
 
     .commentatorImgContainer {

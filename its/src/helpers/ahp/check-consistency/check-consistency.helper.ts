@@ -1,5 +1,5 @@
-import { PairwiseComparisonMatrix } from 'common/types/types';
-import { calculateLambdaMax, checkConsistencyIndex } from 'helpers/helpers';
+import { PairwiseComparisonMatrix } from 'common/types/types.js';
+import { calculateLambdaMax, checkConsistencyIndex } from 'helpers/helpers.js';
 
 const checkConsistency = (matrices: PairwiseComparisonMatrix[]): boolean => {
   const checkResults = [] as boolean[];

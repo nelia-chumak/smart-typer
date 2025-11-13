@@ -1,3 +1,3 @@
-export * from './nickname/nickname.schema';
-export * from './password/password.schema';
-export * from './email/email.schema';
+export * from './email/email.schema.js';
+export * from './nickname/nickname.schema.js';
+export * from './password/password.schema.js';

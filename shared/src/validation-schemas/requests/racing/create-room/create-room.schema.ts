@@ -1,9 +1,9 @@
-import { yup } from 'dependencies/dependencies';
-import { ValidationErrorMessage } from 'common/enums/enums';
 import {
   MAX_ROOM_NAME_LENGTH,
   MIN_ROOM_NAME_LENGTH,
-} from 'common/constants/constants';
+} from 'common/constants/constants.js';
+import { ValidationErrorMessage } from 'common/enums/enums.js';
+import { yup } from 'dependencies/dependencies.js';
 
 const createRoomSchema = yup
   .object()

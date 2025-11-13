@@ -20,13 +20,9 @@ const { reducer } = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       .addMatcher(isAnyOf.apply(null, STARTED_ACTIONS), (state, action) => {
         state[action.type.split('/').shift() as RequestActionType] = true;
       })
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       .addMatcher(isAnyOf.apply(null, FINISHED_ACTIONS), (state, action) => {
         state[action.type.split('/').shift() as RequestActionType] = false;
       });

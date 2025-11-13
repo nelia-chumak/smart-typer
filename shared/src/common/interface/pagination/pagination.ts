@@ -1,2 +1,2 @@
-export * from './pagination-request/pagination-request.interface';
-export * from './pagination-response/pagination-response.interface';
+export * from './pagination-request/pagination-request.interface.js';
+export * from './pagination-response/pagination-response.interface.js';

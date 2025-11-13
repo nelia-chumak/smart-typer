@@ -1,1 +1,1 @@
-export * from './update-settings/update-settings.schema';
+export * from './update-settings/update-settings.schema.js';

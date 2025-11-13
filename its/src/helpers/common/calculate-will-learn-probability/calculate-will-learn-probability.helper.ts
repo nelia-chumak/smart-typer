@@ -1,7 +1,7 @@
 import {
   SkillLessonStatistics,
   SkillWillLearnProbability,
-} from 'common/types/types';
+} from 'common/types/types.js';
 
 const calculateWillLearnProbability = (
   skills: SkillLessonStatistics[],

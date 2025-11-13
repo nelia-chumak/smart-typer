@@ -1,26 +1,29 @@
-@import 'src/assets/css/variables';
+@use 'assets/css/variables' as *;
 
 .googleButton {
-  font-size: $middle-font-size !important;
-  margin: 0.5rem 0 !important;
-  box-shadow: none !important;
-  transition: $button-transition !important;
-  border: none !important;
-  height: 4rem !important;
   width: 20rem !important;
+  height: 4rem !important;
+  margin: 0.5rem 0 !important;
+  border: none !important;
+
+  font-size: $middle-font-size !important;
   line-height: 37.5px !important;
+
+  box-shadow: none !important;
+
+  transition: $button-transition !important;
 
   &:hover {
     box-shadow: $button-shadow !important;
   }
 
   div {
-    height: 95% !important;
     width: 42.5px !important;
+    height: 95% !important;
 
     svg {
-      height: 42.5px !important;
       width: 42.5px !important;
+      height: 42.5px !important;
       margin-top: 0 !important;
     }
   }

@@ -1,29 +1,31 @@
-@import 'src/assets/css/variables';
+@use 'assets/css/variables' as *;
 
 .dialog {
   max-width: none !important;
 
   .modal {
-    padding: 0 1rem 1rem 1rem;
-    border-radius: 0 !important;
     margin: 0 auto;
+    padding: 0 1rem 1rem;
+    border-radius: 0 !important;
 
     .title {
       font-size: $large-font-size !important;
     }
 
     .button {
-      font-size: $middle-font-size;
-      height: 3.5rem;
-      min-width: 7rem;
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
+
+      min-width: 7rem;
+      height: 3.5rem;
+
+      font-size: $middle-font-size;
     }
 
     .submitButton {
-      background-color: $main-green;
       color: $white;
+      background-color: $main-green;
     }
 
     .cancelButton {

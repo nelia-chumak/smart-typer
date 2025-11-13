@@ -1,13 +1,16 @@
-@import 'src/assets/css/variables';
+@use 'assets/css/variables' as *;
 
 .submitButton {
-  height: 3.5rem;
-  width: 13rem;
-  font-size: $middle-font-size;
-  margin: 1rem 0;
-  background-color: $main-green;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+
+  width: 13rem;
+  height: 3.5rem;
+  margin: 1rem 0;
+
+  font-size: $middle-font-size;
   color: $white;
+
+  background-color: $main-green;
 }

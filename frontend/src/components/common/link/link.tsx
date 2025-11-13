@@ -1,6 +1,6 @@
-import { FC } from 'common/types/types';
-import { RRDLink } from 'components/external/external';
 import { AppRoute } from 'common/enums/enums';
+import { FC, JSX } from 'common/types/types';
+import { RRDLink } from 'components/external/external';
 
 type Props = {
   to: AppRoute;

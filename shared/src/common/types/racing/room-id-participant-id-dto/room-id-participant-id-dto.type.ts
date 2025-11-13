@@ -1,4 +1,4 @@
-import { RoomIdDto, ParticipantIdDto } from 'common/types/types';
+import { ParticipantIdDto, RoomIdDto } from 'common/types/types.js';
 
 type RoomIdParticipantIdDto = RoomIdDto & ParticipantIdDto;
 

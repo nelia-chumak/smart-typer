@@ -1,5 +1,5 @@
-import { ShareUrlKey } from 'common/enums/enums';
-import { ShareRoomUrlDto } from '../racing';
+import { ShareUrlKey } from 'common/enums/enums.js';
+import { ShareRoomUrlDto } from '../racing.js';
 
 type SendRoomUrlToEmailsRequestDto = {
   emails: string[];

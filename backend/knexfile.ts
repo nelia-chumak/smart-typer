@@ -1,7 +1,7 @@
 import { Knex } from 'knex';
 import { knexSnakeCaseMappers } from 'objection';
-import { Environment } from './src/common/enums/enums';
 import { ENV } from './src/common/constants/constants';
+import { Environment } from './src/common/enums/enums';
 
 type ConfigPropType = Record<string, unknown>;
 
@@ -18,6 +18,7 @@ const DEFAULT_ENV_CONFIG: Knex.Config<ConfigPropType> = {
     directory: './src/data/migrations',
     tableName: 'migrations',
   },
+  seeds: { directory: './src/data/seeds' },
   debug: false,
   ...knexSnakeCaseMappers({ underscoreBetweenUppercaseLetters: true }),
 };

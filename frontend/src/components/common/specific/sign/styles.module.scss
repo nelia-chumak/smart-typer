@@ -1,17 +1,20 @@
-@import 'src/assets/css/variables';
+@use 'assets/css/variables' as *;
 
 .container {
-  width: 100vw;
-  height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  background-color: $light-grey;
-  color: $dark-blue;
-  font-size: $middle-font-size;
-  text-align: center;
+  justify-content: center;
+
+  width: 100vw;
+  height: 100vh;
   padding: 3rem;
+
+  font-size: $middle-font-size;
+  color: $dark-blue;
+  text-align: center;
+
+  background-color: $light-grey;
 
   a {
     color: $dark-green;
@@ -29,25 +32,25 @@
   .line {
     display: inline-block;
     width: 45%;
+    margin: 1rem 0.5rem;
     vertical-align: middle;
-    margin: 1rem 0.5rem 1rem 0.5rem;
   }
 
   .form {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
 
     .formFields {
-      text-align: start;
       width: 75%;
+      text-align: start;
     }
 
     .orSeparator {
-      padding: 1rem 0;
-      width: 100%;
       display: inline-block;
+      width: 100%;
+      padding: 1rem 0;
     }
   }
 }

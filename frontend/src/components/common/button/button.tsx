@@ -1,7 +1,7 @@
-import { FC, SyntheticEvent, VoidCallback } from 'common/types/types';
-import { clsx } from 'helpers/helpers';
-import { Spinner } from 'components/common/common';
 import { SpinnerSize } from 'common/enums/enums';
+import { FC, JSX, SyntheticEvent, VoidCallback } from 'common/types/types';
+import { Spinner } from 'components/common/common';
+import { clsx } from 'helpers/helpers';
 
 import styles from './styles.module.scss';
 
@@ -44,7 +44,7 @@ const Button: FC<Props> = ({
       onClick={isDisabled ? undefined : handleClick}
     >
       {isLoading ? (
-        <Spinner size={SpinnerSize.SMALL} isCentered={false}/>
+        <Spinner size={SpinnerSize.SMALL} isCentered={false} />
       ) : (
         <>
           {iconName && <i className={clsx(iconName, iconClassName)}></i>}

@@ -1,9 +1,9 @@
-import { IrtPayload, IrtResult } from 'common/types/types';
+import { IrtPayload, IrtResult } from 'common/types/types.js';
 import {
   calculateKnownProbabilityForLesson,
   calculateWillLearnProbability,
   calculateKnownProbability,
-} from 'helpers/helpers';
+} from 'helpers/helpers.js';
 
 const irt = (payload: IrtPayload): IrtResult => {
   const { skills, lessonName } = payload;

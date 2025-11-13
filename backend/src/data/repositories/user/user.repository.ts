@@ -141,7 +141,6 @@ class User {
           [`${TableName.USERS}.${UserKey.EMAIL}`]: email.toLowerCase(),
         })
         .withGraphJoined(
-          // eslint-disable-next-line max-len
           `[${UserRelationMappings.SETTINGS}, ${UserRelationMappings.USER_TO_ROOMS}.[${UserToRoomRelationMappings.PERSONAL_ROOM}.[${RoomRelationMappings.PARTICIPANTS}]]]`,
         )
         .modifyGraph(UserRelationMappings.SETTINGS, (builder) =>
@@ -159,12 +158,10 @@ class User {
             builder.select(CommonKey.ID, RoomKey.LESSON_ID, RoomKey.NAME),
         )
         .modifyGraph(
-          // eslint-disable-next-line max-len
           `${UserRelationMappings.USER_TO_ROOMS}.[${UserToRoomRelationMappings.PERSONAL_ROOM}.[${RoomRelationMappings.PARTICIPANTS}]]`,
           (builder) =>
             builder.select(CommonKey.ID, UserKey.NICKNAME, UserKey.PHOTO_URL),
         )
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .castTo<any>()) ?? {};
 
     if (!userToRooms) {
@@ -187,7 +184,6 @@ class User {
         .select(...User.DEFAULT_USER_COLUMNS_TO_RETURN)
         .findById(userId)
         .withGraphJoined(
-          // eslint-disable-next-line max-len
           `[${UserRelationMappings.SETTINGS}, ${UserRelationMappings.USER_TO_ROOMS}.[${UserToRoomRelationMappings.PERSONAL_ROOM}.[${RoomRelationMappings.PARTICIPANTS}]]]`,
         )
         .modifyGraph(UserRelationMappings.SETTINGS, (builder) =>
@@ -205,12 +201,10 @@ class User {
             builder.select(CommonKey.ID, RoomKey.LESSON_ID, RoomKey.NAME),
         )
         .modifyGraph(
-          // eslint-disable-next-line max-len
           `${UserRelationMappings.USER_TO_ROOMS}.[${UserToRoomRelationMappings.PERSONAL_ROOM}.[${RoomRelationMappings.PARTICIPANTS}]]`,
           (builder) =>
             builder.select(CommonKey.ID, UserKey.NICKNAME, UserKey.PHOTO_URL),
         )
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .castTo<any>()) ?? {};
 
     if (!userToRooms) {
@@ -293,10 +287,8 @@ class User {
           .where(SettingsKey.IS_SHOWN_IN_RATING, true)
           .orWhere({ [SettingsKey.USER_ID]: userId }),
       )
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .castTo<any[]>();
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const mappedRating = rating.map(({ settings, ...user }) => ({
       ...user,
     }));

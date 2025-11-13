@@ -2,8 +2,8 @@
   "name": "smart-typer",
   "private": "true",
   "engines": {
-    "node": ">=16 <17",
-    "npm": ">=8 <9"
+    "node": ">=25 <26",
+    "npm": ">=11 <12"
   },
   "scripts": {
     "move:deploy": "mv backend/build . && mv frontend/build/* build/public && cp -r ar/* build/public && rm -rf build/public/icons && cp -r backend/node_modules build ",
@@ -37,19 +37,31 @@
     "heroku-postbuild": "npm run build && npm run move:deploy"
   },
   "devDependencies": {
-    "@ls-lint/ls-lint": "1.9.2",
-    "eslint": "8.19.0",
-    "@typescript-eslint/eslint-plugin": "5.30.6",
-    "concurrently": "6.2.0",
-    "editorconfig-checker": "4.0.2",
-    "lint-staged": "11.1.0",
-    "prettier": "2.8.4",
-    "simple-git-hooks": "2.8.1",
-    "stylelint": "13.13.1",
-    "stylelint-config-recommended": "5.0.0",
-    "typescript": "4.3.5"
+    "@ls-lint/ls-lint": "2.3.1",
+    "concurrently": "9.2.1",
+    "editorconfig-checker": "6.1.1",
+    "eslint": "9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-react": "^7.37.5",
+    "globals": "^16.5.0",
+    "lint-staged": "16.2.6",
+    "postcss-scss": "^4.0.9",
+    "postcss-styled-syntax": "^0.7.1",
+    "prettier": "3.6.2",
+    "simple-git-hooks": "2.13.1",
+    "stylelint": "16.25.0",
+    "stylelint-config-clean-order": "^7.0.0",
+    "stylelint-config-standard-scss": "^16.0.0",
+    "stylelint-order": "^7.0.0",
+    "stylelint-scss": "^6.12.1",
+    "typescript": "5.9.3",
+    "typescript-eslint": "^8.46.3"
   },
   "simple-git-hooks": {
     "pre-commit": "npx lint-staged"
+  },
+  "dependencies": {
+    "@eslint/js": "^9.39.1"
   }
 }

@@ -3,8 +3,8 @@ import {
   AhpSkillCountInLesson,
   AhpSkillLevel,
   PairwiseComparisonMatrix,
-} from 'common/types/types';
-import { calculatePriorityCoefficient } from 'helpers/helpers';
+} from 'common/types/types.js';
+import { calculatePriorityCoefficient } from 'helpers/helpers.js';
 
 type Lessons = {
   lessonId: AhpLesson['lessonId'];
@@ -16,9 +16,10 @@ type Lessons = {
 const calculateAlternativePairwiseComparisonMatrix = (
   lessons: Lessons,
 ): PairwiseComparisonMatrix => {
-  const matrix = new Array(lessons.length)
-    .fill(0)
-    .map(() => new Array(lessons.length).fill(0)) as PairwiseComparisonMatrix;
+  const matrix: PairwiseComparisonMatrix = Array.from(
+    { length: lessons.length },
+    () => Array.from({ length: lessons.length }, () => 0),
+  );
 
   for (let i = 0; i < lessons.length; i++) {
     const firstLesson = lessons[i];

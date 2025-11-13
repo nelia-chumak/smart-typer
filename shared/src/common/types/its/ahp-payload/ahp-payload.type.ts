@@ -1,4 +1,4 @@
-import { AhpLesson, AhpSkillLevel } from 'common/types/types';
+import { AhpLesson, AhpSkillLevel } from 'common/types/types.js';
 
 type AhpPayload = {
   lessons: AhpLesson[];

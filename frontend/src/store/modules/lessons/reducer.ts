@@ -102,8 +102,9 @@ const { reducer } = createSlice({
         (state, action) => {
           state.currentLesson = action.payload;
           const misclicksLength = action.payload.content.length;
-          state.currentLesson.misclicks = new Array(misclicksLength).fill(
-            false,
+          state.currentLesson.misclicks = Array.from(
+            { length: misclicksLength },
+            () => false,
           );
         },
       );

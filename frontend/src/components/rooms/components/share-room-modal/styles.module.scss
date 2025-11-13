@@ -1,4 +1,4 @@
-@import 'src/assets/css/variables';
+@use 'assets/css/variables' as *;
 
 .shareRoomModal {
   width: 25vw !important;
@@ -14,21 +14,24 @@
     border-radius: 0;
 
     &.focused {
-      color: $dark-blue !important;
       border-color: $main-green !important;
+      color: $dark-blue !important;
       box-shadow: $input-shadow;
     }
   }
 
   .sendButton {
-    font-size: $middle-font-size;
-    height: 3.5rem;
-    width: 7rem;
     display: flex;
-    justify-content: center;
     align-items: center;
-    background-color: $main-green;
-    color: $white;
+    justify-content: center;
+
+    width: 7rem;
+    height: 3.5rem;
     margin: 0 auto;
+
+    font-size: $middle-font-size;
+    color: $white;
+
+    background-color: $main-green;
   }
 }

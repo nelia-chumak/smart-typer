@@ -1,4 +1,4 @@
-import { PairwiseComparisonMatrix } from 'common/types/types';
+import { PairwiseComparisonMatrix } from 'common/types/types.js';
 
 const checkConsistencyIndex = (
   matrix: PairwiseComparisonMatrix,

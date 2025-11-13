@@ -1,5 +1,5 @@
-import { LessonKey } from 'common/enums/enums';
-import { LessonDto, SkillLessonStatistics } from 'common/types/types';
+import { LessonKey } from 'common/enums/enums.js';
+import { LessonDto, SkillLessonStatistics } from 'common/types/types.js';
 
 type IrtPayload = {
   skills: SkillLessonStatistics[];

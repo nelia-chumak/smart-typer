@@ -110,14 +110,12 @@ class Lesson {
           `${LessonRelationMappings.LESSON_TO_SKILLS}.[${LessonToSkillRelationMapping.SKILL}]`,
           (builder) => builder.select(CommonKey.ID, SkillKey.NAME),
         )
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .castTo<any>()) ?? {};
 
     if (!lessonToSkills) {
       return;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const mappedSkills = lessonToSkills.map(({ count, skill }: any) => ({
       count,
       ...skill,
@@ -207,7 +205,6 @@ class Lesson {
       )
       .offset(offset)
       .limit(limit)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .castTo<any[]>();
 
     const mappedLessons = lessons.map(
@@ -301,7 +298,6 @@ class Lesson {
         `${LessonRelationMappings.STUDY_PLAN}.${UserToStudyPlanLessonKey.LESSON_ID}`,
         RecordsSortOrder.ASC,
       )
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .castTo<any[]>();
 
     const mappedLessons = lessons.map(
@@ -454,9 +450,7 @@ class Lesson {
         (builder) => builder.select(CommonKey.ID, SkillKey.NAME),
       );
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const mappedLessons = lessons.map(({ lessonToSkills, ...lesson }: any) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const mappedSkills = lessonToSkills.map(({ count, skill }: any) => ({
         count,
         ...skill,

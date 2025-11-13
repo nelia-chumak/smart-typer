@@ -1,4 +1,4 @@
-@import 'src/assets/css/variables';
+@use 'assets/css/variables' as *;
 
 .hiddenInput {
   display: flex;
@@ -7,13 +7,15 @@
   width: 100%;
 
   .hideValueButton {
-    background-color: $white;
-    border: $main-border;
     display: flex;
-    justify-content: center;
     align-items: center;
-    height: 3.5rem;
+    justify-content: center;
+
     width: 3.5rem;
+    height: 3.5rem;
+    border: $main-border;
+
+    background-color: $white;
 
     .hideValueIcon {
       font-size: $middle-icon-font-size;

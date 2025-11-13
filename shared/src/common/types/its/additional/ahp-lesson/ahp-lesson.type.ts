@@ -1,5 +1,5 @@
-import { ContentType } from 'common/enums/enums';
-import { AhpSkillCountInLesson } from 'common/types/types';
+import { ContentType } from 'common/enums/enums.js';
+import { AhpSkillCountInLesson } from 'common/types/types.js';
 
 type AhpLesson = {
   lessonId: number;

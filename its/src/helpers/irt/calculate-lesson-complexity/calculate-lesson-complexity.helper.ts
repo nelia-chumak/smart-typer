@@ -1,5 +1,5 @@
-import { TEST_LESSON_NAMES } from 'common/constants/constants';
-import { IrtPayload } from 'common/types/types';
+import { TEST_LESSON_NAMES } from 'common/constants/constants.js';
+import { IrtPayload } from 'common/types/types.js';
 
 const calculateLessonComplexity = (
   lessonName: IrtPayload['lessonName'],

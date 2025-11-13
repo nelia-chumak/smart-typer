@@ -1,8 +1,9 @@
 import { IOption } from 'common/interface/interface';
+import { JSX } from 'common/types/external/external';
 import { ReactSelect } from 'components/external/external';
 
-import { getStyles } from './get-styles';
 import { VoidCallback } from 'common/types/types';
+import { getStyles } from './get-styles';
 
 type Props<T> = {
   options: readonly IOption<T>[];

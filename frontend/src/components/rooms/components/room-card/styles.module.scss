@@ -1,4 +1,4 @@
-@import 'src/assets/css/variables';
+@use 'assets/css/variables' as *;
 
 .roomCard {
   height: 20vh;
@@ -6,8 +6,8 @@
 
   .avatarsContainer {
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     margin-top: 2rem;
 
     .avatar:not(:first-child) {

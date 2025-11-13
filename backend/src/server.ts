@@ -22,9 +22,18 @@ const knex = Knex(knexConfig[ENV.APP.NODE_ENV as Environment]);
 Model.knex(knex);
 
 const logger = pino({
-  prettyPrint: true,
+  level: process.env.LOG_LEVEL ?? 'info',
+  transport: process.env.NODE_ENV === 'production'
+    ? undefined
+    : {
+        target: 'pino-pretty',
+        options: {
+          colorize: true,
+          translateTime: 'SYS:standard',
+          singleLine: false
+        }
+      }
 });
-
 const io = new Server(httpServer);
 
 socketService.initIo(io);
@@ -47,7 +56,8 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.get('/ar-camera', (_req, res) => {
   res.sendFile(path.join(__dirname, '../public/ar-camera.html'));
 });
-app.use('/*', (_req, res) => {
+
+app.use(/.*/, (_req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
@@ -57,7 +67,7 @@ httpServer.listen(ENV.APP.SERVER_PORT, async () => {
   );
 });
 
-app.on('close', async () => {
+httpServer.on('close', async () => {
   await knex.destroy();
 });
 

@@ -1,5 +1,5 @@
-import { HttpCode, CustomExceptionName } from 'common/enums/enums';
-import { DEFAULT_MESSAGE } from './common/constants';
+import { CustomExceptionName, HttpCode } from 'common/enums/enums.js';
+import { DEFAULT_MESSAGE } from './common/constants.js';
 
 class HttpError extends Error {
   status: HttpCode;

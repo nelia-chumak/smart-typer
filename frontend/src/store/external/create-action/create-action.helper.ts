@@ -20,7 +20,6 @@ type CreateAction = {
 const createAction: CreateAction = <T, K>(
   actionType: ActionType,
   func?: CreateActionCallback<T, K>,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): any => {
   if (func) {
     return reduxCreateAction<CreateActionCallback<T, K>, ActionType>(

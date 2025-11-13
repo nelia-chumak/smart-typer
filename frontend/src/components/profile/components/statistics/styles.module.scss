@@ -1,4 +1,4 @@
-@import 'src/assets/css/variables';
+@use 'assets/css/variables' as *;
 
 .statisticsSection {
   display: flex;

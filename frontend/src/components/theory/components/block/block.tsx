@@ -1,6 +1,6 @@
+import { FC, JSX } from 'common/types/types';
 import { ImageAlignment } from 'components/theory/common/enums/enums';
 import styles from './styles.module.scss';
-import { FC } from 'common/types/types';
 
 type Props = {
   title: string;

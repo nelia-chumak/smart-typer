@@ -1,6 +1,6 @@
 import { StorageKey } from 'common/enums/enums';
 
-type StorageType = typeof window.localStorage | typeof window.sessionStorage;
+type StorageType = globalThis.Storage;
 
 type Constructor = {
   storage: StorageType;

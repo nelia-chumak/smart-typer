@@ -1,11 +1,15 @@
+import { FormFieldLabel, FormFieldType } from 'common/enums/enums';
 import {
   FC,
   FieldError,
+  JSX,
   RefObject,
   UseFormRegisterReturn,
 } from 'common/types/types';
-import { FormFieldLabel, FormFieldType } from 'common/enums/enums';
+import { Button } from 'components/common/common';
 import { RBForm } from 'components/external/external';
+import { clsx } from 'helpers/helpers';
+import { useState } from 'hooks/hooks';
 import {
   Checkbox,
   FileSelector,
@@ -13,9 +17,6 @@ import {
   Input,
   Textarea,
 } from './components/components';
-import { useState } from 'hooks/hooks';
-import { clsx } from 'helpers/helpers';
-import { Button } from 'components/common/common';
 
 import styles from './styles.module.scss';
 
@@ -30,7 +31,7 @@ type Props = {
   inputClassName?: string;
   value?: string;
   readOnly?: boolean;
-  inputRef?: RefObject<HTMLInputElement>;
+  inputRef?: RefObject<HTMLInputElement | null>;
   hidden?: boolean;
   hasCopyButton?: boolean;
   children?: JSX.Element;

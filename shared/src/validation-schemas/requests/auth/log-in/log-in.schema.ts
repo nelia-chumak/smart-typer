@@ -1,6 +1,9 @@
-import { yup } from 'dependencies/dependencies';
-import { ValidationErrorMessage } from 'common/enums/enums';
-import { emailSchema, passwordSchema } from 'validation-schemas/fields/fields';
+import { ValidationErrorMessage } from 'common/enums/enums.js';
+import { yup } from 'dependencies/dependencies.js';
+import {
+  emailSchema,
+  passwordSchema,
+} from 'validation-schemas/fields/fields.js';
 
 const logInSchema = yup
   .object()

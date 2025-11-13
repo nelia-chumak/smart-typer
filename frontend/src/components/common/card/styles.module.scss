@@ -1,13 +1,29 @@
-@import 'src/assets/css/variables';
+@use 'assets/css/variables' as *;
 
 .card {
   position: relative;
-  margin: 2rem 0;
+
   overflow: hidden;
-  background-color: white;
-  border: $main-border;
   display: flex;
   flex-direction: column;
+
+  margin: 2rem 0;
+  border: $main-border;
+
+  background-color: white;
+
+  &::before {
+    content: '';
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    display: block;
+
+    width: 100%;
+    height: 1rem;
+  }
 
   &.large {
     width: 27.5vw;
@@ -22,16 +38,6 @@
   &.small {
     min-width: 12.5vw;
     padding: 1rem;
-  }
-
-  &::before {
-    content: '';
-    display: block;
-    width: 100%;
-    height: 1rem;
-    position: absolute;
-    top: 0;
-    left: 0;
   }
 
   &.blue::before {
@@ -93,8 +99,8 @@
     }
 
     .title {
-      flex: 1;
       display: flex;
+      flex: 1;
       align-items: baseline;
       margin: 0;
 
@@ -110,14 +116,16 @@
     counter-increment: list;
 
     .title::before {
+      content: counter(list);
+
       display: flex;
-      justify-content: center;
-      align-items: center;
       flex: 0 0 auto;
-      margin-right: 1rem;
+      align-items: center;
+      justify-content: center;
+
       width: 3rem;
       height: 3rem;
-      content: counter(list);
+      margin-right: 1rem;
       padding: 1rem;
       border-radius: 50%;
     }

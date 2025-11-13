@@ -1,2 +1,25 @@
 extends:
-  - stylelint-config-recommended
+  - stylelint-config-standard-scss
+  - stylelint-config-clean-order
+
+plugins:
+  - stylelint-scss
+  - stylelint-order
+
+ignoreFiles:
+  - "**/node_modules/**"
+  - "**/dist/**"
+  - "**/build/**"
+  - "**/coverage/**"
+
+overrides:
+  - files: ["**/*.scss"]
+    customSyntax: "postcss-scss"
+  - files: ["**/*.{jsx,tsx}"]
+    customSyntax: "postcss-styled-syntax"
+
+rules:
+  color-function-notation: modern
+  alpha-value-notation: percentage
+  selector-class-pattern: null
+  no-empty-source: true

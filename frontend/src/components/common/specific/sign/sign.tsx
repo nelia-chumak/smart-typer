@@ -1,18 +1,18 @@
-import { FC, SyntheticEvent } from 'common/types/types';
-import { RBForm } from 'components/external/external';
 import {
-  HttpErrorMessage,
   ContentWrapperShadow,
   ContentWrapperSize,
+  HttpErrorMessage,
 } from 'common/enums/enums';
+import { FC, JSX, SyntheticEvent } from 'common/types/types';
 import { ContentWrapper } from 'components/common/common';
+import { RBForm } from 'components/external/external';
+import { AlternativeRoute as AlternativeRouteProp } from './common/common';
 import {
   AlternativeRoute,
+  AuthError,
   GoogleButton,
   SubmitButton,
-  AuthError,
 } from './components/components';
-import { AlternativeRoute as AlternativeRouteProp } from './common/common';
 
 import logo from 'assets/img/logo.png';
 import styles from './styles.module.scss';

@@ -1,5 +1,5 @@
-import * as queryString from 'query-string';
-import EventEmitter from 'events';
+import queryString from 'query-string';
+import EventEmitter from 'eventemitter3';
 import { HttpError } from 'exceptions/exceptions';
 import {
   RequestContentType,

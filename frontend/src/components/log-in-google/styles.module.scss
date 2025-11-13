@@ -1,15 +1,18 @@
-@import 'src/assets/css/variables';
+@use 'assets/css/variables' as *;
 
 .logInGoogle {
-  height: 100vh;
   display: flex;
-  justify-content: center;
   align-items: center;
-  background-color: $light-grey;
+  justify-content: center;
+
+  height: 100vh;
+
   color: $dark-blue;
 
+  background-color: $light-grey;
+
   .inscription {
-    font-size: $middle-font-size;
     margin-left: 1rem;
+    font-size: $middle-font-size;
   }
 }

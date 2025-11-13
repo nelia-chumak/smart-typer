@@ -2,9 +2,9 @@ import {
   IrtPayload,
   SkillKnownProbabilityForLesson,
   SkillWillLearnProbability,
-} from 'common/types/types';
-import { calculateLessonComplexity } from '../calculate-lesson-complexity/calculate-lesson-complexity.helper';
-import { solveEquation } from '../solve-equation/solve-equation.helper';
+} from 'common/types/types.js';
+import { calculateLessonComplexity } from '../calculate-lesson-complexity/calculate-lesson-complexity.helper.js';
+import { solveEquation } from '../solve-equation/solve-equation.helper.js';
 
 type CalculateWillLearnProbabilityProps = {
   lessonName: IrtPayload['lessonName'];

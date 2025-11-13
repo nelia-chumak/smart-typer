@@ -1,10 +1,10 @@
-import { yup } from 'dependencies/dependencies';
 import {
   MAX_NICKNAME_LENGTH,
   MIN_NICKNAME_LENGTH,
-} from 'common/constants/constants';
-import { ValidationErrorMessage } from 'common/enums/enums';
-import { nicknameRegex } from 'validation-schemas/regex/regex';
+} from 'common/constants/constants.js';
+import { ValidationErrorMessage } from 'common/enums/enums.js';
+import { yup } from 'dependencies/dependencies.js';
+import { nicknameRegex } from 'validation-schemas/regex/regex.js';
 
 const nicknameSchema = yup
   .string()

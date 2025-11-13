@@ -2,9 +2,8 @@ import {
   AhpLesson,
   AhpSkillLevel,
   PairwiseComparisonMatrix,
-} from 'common/types/types';
-// eslint-disable-next-line max-len
-import { calculateAlternativePairwiseComparisonMatrix } from 'helpers/ahp/calculate-alternative-pairwise-comparison-matrix/calculate-alternative-pairwise-comparison-matrix.helper';
+} from 'common/types/types.js';
+import { calculateAlternativePairwiseComparisonMatrix } from 'helpers/ahp/calculate-alternative-pairwise-comparison-matrix/calculate-alternative-pairwise-comparison-matrix.helper.js';
 
 const calculateAlternativePairwiseComparisonMatrices = (
   lessons: AhpLesson[],

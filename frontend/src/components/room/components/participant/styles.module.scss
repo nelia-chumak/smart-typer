@@ -1,4 +1,4 @@
-@import 'src/assets/css/variables';
+@use 'assets/css/variables' as *;
 
 .participant {
   display: flex;
@@ -33,6 +33,7 @@
 
   .progressBar {
     border: 1px solid $main-green;
+
     div {
       background-color: $main-green;
     }

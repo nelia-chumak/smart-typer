@@ -3,9 +3,8 @@ import {
   SkillStatisticsWithWillLearnProbability,
   SkillsGuessProbability,
   SkillsSlipProbability,
-} from 'common/types/types';
-// eslint-disable-next-line max-len
-import { calculateSkillConditionalPreviousLearnedProbability } from '../calculate-skill-conditional-previous-learned-probability/calculate-skill-conditional-previous-learned-probability.helper';
+} from 'common/types/types.js';
+import { calculateSkillConditionalPreviousLearnedProbability } from '../calculate-skill-conditional-previous-learned-probability/calculate-skill-conditional-previous-learned-probability.helper.js';
 
 type CalculateLearnedProbabilityProps = {
   skills: SkillStatisticsWithWillLearnProbability[];

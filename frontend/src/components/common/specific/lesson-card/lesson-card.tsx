@@ -1,6 +1,3 @@
-import { FC, LessonDto, VoidAction, VoidCallback } from 'common/types/types';
-import { clsx, replaceRouteIdParam } from 'helpers/helpers';
-import { Card, Label, Link, Spinner, Button } from 'components/common/common';
 import {
   AlphabetLetter,
   AppRoute,
@@ -16,6 +13,15 @@ import {
   CreatorTypeToLabelColor,
   skillSymbolToArMarker,
 } from 'common/maps/maps';
+import {
+  FC,
+  JSX,
+  LessonDto,
+  VoidAction,
+  VoidCallback,
+} from 'common/types/types';
+import { Button, Card, Label, Link, Spinner } from 'components/common/common';
+import { clsx, replaceRouteIdParam } from 'helpers/helpers';
 
 import styles from './styles.module.scss';
 

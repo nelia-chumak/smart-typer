@@ -1,13 +1,13 @@
-@import 'src/assets/css/variables';
+@use 'assets/css/variables' as *;
 
 .formField {
+  display: flex;
+  flex-flow: row-reverse nowrap;
+  align-items: center;
+  justify-content: flex-end;
+
   font-size: $middle-font-size;
   color: $dark-blue;
-  display: flex;
-  flex-direction: row-reverse;
-  justify-content: flex-end;
-  align-items: center;
-  flex-wrap: nowrap;
 
   .label {
     margin: 0;
@@ -17,26 +17,29 @@
     display: flex;
 
     .input {
-      height: 3.5rem;
-      width: 100%;
       display: flex;
       align-items: baseline;
+
+      width: 100%;
+      height: 3.5rem;
+      border: $main-border;
+      border-radius: 0;
+
       font-size: inherit;
       color: $dark-blue;
+
       background-color: $white;
-      border-radius: 0;
-      border: $main-border;
 
       &::placeholder {
-        color: $dark-grey;
         font-size: $middle-font-size;
+        color: $dark-grey;
       }
 
       &:focus {
-        color: $dark-blue !important;
         border-color: $main-green !important;
-        box-shadow: $input-shadow;
+        color: $dark-blue !important;
         background-color: $white !important;
+        box-shadow: $input-shadow;
       }
     }
 
@@ -46,13 +49,16 @@
       }
 
       .copyButton {
-        background-color: $main-green;
-        color: $white;
-        height: 3.5rem;
-        width: 3.5rem;
         display: flex;
-        justify-content: center;
         align-items: center;
+        justify-content: center;
+
+        width: 3.5rem;
+        height: 3.5rem;
+
+        color: $white;
+
+        background-color: $main-green;
 
         .copyIcon {
           font-size: $middle-icon-font-size;
@@ -69,8 +75,8 @@
       width: 100%;
 
       .input {
-        width: auto;
         flex-grow: 1;
+        width: auto;
       }
     }
 

@@ -1,5 +1,5 @@
-import { CommonKey, LessonKey } from 'common/enums/enums';
-import { LessonDto } from 'common/types/types';
+import { CommonKey, LessonKey } from 'common/enums/enums.js';
+import { LessonDto } from 'common/types/types.js';
 
 type LessonResponseDto = Pick<
   LessonDto,

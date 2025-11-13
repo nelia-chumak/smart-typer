@@ -1,27 +1,32 @@
-@import 'src/assets/css/variables';
+@use 'assets/css/variables' as *;
 
 .rooms {
-  height: 100%;
   width: 100%;
+  height: 100%;
   padding: 3rem;
 
   .lessonCards {
+    counter-reset: list;
+
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 0.75rem 3rem;
+
     list-style: none;
-    counter-reset: list;
   }
 
   .createRoomButton {
-    height: 3.5rem;
-    width: 12rem;
-    font-size: $middle-font-size;
-    margin: 1rem 0;
-    background-color: $main-green;
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+
+    width: 12rem;
+    height: 3.5rem;
+    margin: 1rem 0;
+
+    font-size: $middle-font-size;
     color: $white;
+
+    background-color: $main-green;
   }
 }

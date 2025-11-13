@@ -1,5 +1,5 @@
-import { ContentType, ValidationErrorMessage } from 'common/enums/enums';
-import { yup } from 'dependencies/dependencies';
+import { ContentType, ValidationErrorMessage } from 'common/enums/enums.js';
+import { yup } from 'dependencies/dependencies.js';
 
 const contentTypeSchema = yup
   .string()

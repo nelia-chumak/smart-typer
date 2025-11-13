@@ -2,7 +2,7 @@ import {
   SkillKnownProbability,
   SkillLessonStatistics,
   SkillsSlipProbability,
-} from 'common/types/types';
+} from 'common/types/types.js';
 
 const calculateSlipProbability = (
   skills: SkillKnownProbability[],

@@ -1,5 +1,5 @@
 import * as math from 'mathjs';
-import { AhpPayload, AhpResult } from 'common/types/types';
+import { AhpPayload, AhpResult } from 'common/types/types.js';
 import {
   calculateAcceptableAlternatives,
   calculateAlternativePairwiseComparisonMatrices,
@@ -10,7 +10,7 @@ import {
   checkAcceptableAdvantage,
   checkConsistency,
   findLessonWithMaxWorstSkillCount,
-} from 'helpers/helpers';
+} from 'helpers/helpers.js';
 
 const ahp = (payload: AhpPayload): AhpResult => {
   const { lessons, lastFinishedLessonIds, skillLevels } = payload;

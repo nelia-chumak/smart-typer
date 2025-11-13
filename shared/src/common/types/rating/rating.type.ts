@@ -1,5 +1,5 @@
-import { CommonKey, StatisticsKey, UserKey } from 'common/enums/enums';
-import { Statistics, UserDto } from 'common/types/types';
+import { CommonKey, StatisticsKey, UserKey } from 'common/enums/enums.js';
+import { Statistics, UserDto } from 'common/types/types.js';
 
 type Rating = (Pick<
   UserDto,

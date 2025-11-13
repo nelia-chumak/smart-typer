@@ -1,4 +1,4 @@
-import { ContentType, CreatorType } from 'common/enums/enums';
+import { ContentType, CreatorType } from 'common/enums/enums.js';
 
 type LessonDto = {
   id: number;

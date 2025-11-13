@@ -1,4 +1,4 @@
-import { IrtResult, SkillKnownProbabilities } from 'common/types/types';
+import { IrtResult, SkillKnownProbabilities } from 'common/types/types.js';
 
 const calculateKnownProbability = (
   skills: SkillKnownProbabilities[],

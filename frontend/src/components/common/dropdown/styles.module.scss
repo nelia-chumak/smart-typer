@@ -1,4 +1,4 @@
-@import 'src/assets/css/variables';
+@use 'assets/css/variables' as *;
 
 .dropdown {
   & > a.dropdownToggle {
@@ -13,16 +13,18 @@
   }
 
   div.dropdownMenu {
-    font-size: $middle-font-size;
     width: 100%;
     margin-top: 1rem;
+    font-size: $middle-font-size;
 
     .dropdownItem {
       display: block;
+
       padding: 0.5rem 1.5rem;
-      text-decoration: none;
+
       font-weight: 600;
       color: $dark-blue;
+      text-decoration: none;
 
       &:active {
         background-color: $light-grey;

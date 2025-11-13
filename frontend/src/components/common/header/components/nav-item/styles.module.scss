@@ -1,19 +1,22 @@
-@import 'src/assets/css/variables';
+@use 'assets/css/variables' as *;
 
 .contentContainer {
-  font-weight: bolder;
-  color: $white;
-  background-color: inherit;
-  border: none;
-  outline: none;
   display: flex;
   align-items: center;
+
   margin: 0 1.25rem;
+  border: none;
+
+  font-weight: bolder;
   font-style: italic;
+  color: $white;
+
+  background-color: inherit;
+  outline: none;
 
   .icon {
-    font-size: $header-icon-font-size;
     margin-right: 0.5rem;
+    font-size: $header-icon-font-size;
   }
 
   .label {

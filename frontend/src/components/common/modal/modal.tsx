@@ -1,6 +1,6 @@
-import { RBModal } from 'components/external/external';
-import { FC, ModalButton, VoidAction } from 'common/types/types';
+import { FC, JSX, ModalButton, VoidAction } from 'common/types/types';
 import { Button } from 'components/common/common';
+import { RBModal } from 'components/external/external';
 import { clsx } from 'helpers/helpers';
 
 import styles from './styles.module.scss';

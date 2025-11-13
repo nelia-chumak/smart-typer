@@ -11,7 +11,6 @@ import {
 } from 'common/enums/enums';
 import {
   FC,
-  MutableRefObject,
   Participant,
   SettingsDto,
   UserDto,
@@ -105,7 +104,7 @@ const TypingCanvas: FC<Props> = ({
       volume: 0.25,
     },
   );
-  const pageRef = useRef() as MutableRefObject<HTMLDivElement>;
+  const pageRef = useRef<HTMLDivElement | null>(null);
 
   const handleDecreaseTimerBeforeTypingValue = (timerValue: number): void => {
     if (timerValue >= 0) {
@@ -208,7 +207,7 @@ const TypingCanvas: FC<Props> = ({
   const handleTimerBeforeTypingChange = (): void => {
     if (!timerBeforeTypingValue && isStarted) {
       onTypingStart();
-      pageRef.current.focus();
+      pageRef.current?.focus();
       if (isSoundTurnedOn) {
         playClockRing();
       }

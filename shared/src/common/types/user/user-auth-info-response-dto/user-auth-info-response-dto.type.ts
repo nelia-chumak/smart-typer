@@ -1,9 +1,9 @@
 import {
-  TokensResponseDto,
-  SettingsDto,
   RoomDto,
+  SettingsDto,
+  TokensResponseDto,
   UserDto,
-} from 'common/types/types';
+} from 'common/types/types.js';
 
 type UserAuthInfoResponseDto = UserDto &
   TokensResponseDto & {

@@ -1,4 +1,4 @@
-import { ContentType } from 'common/enums/enums';
+import { ContentType } from 'common/enums/enums.js';
 
 const calculatePriorityCoefficient = (
   level: number,

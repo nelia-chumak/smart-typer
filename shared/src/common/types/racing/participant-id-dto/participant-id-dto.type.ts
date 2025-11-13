@@ -1,5 +1,5 @@
-import { CommonKey } from 'common/enums/enums';
-import { UserDto } from 'common/types/types';
+import { CommonKey } from 'common/enums/enums.js';
+import { UserDto } from 'common/types/types.js';
 
 type ParticipantIdDto = {
   participantId: UserDto[CommonKey.ID];

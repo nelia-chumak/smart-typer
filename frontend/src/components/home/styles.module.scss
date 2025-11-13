@@ -1,20 +1,19 @@
-@import 'src/assets/css/variables';
+@use 'assets/css/variables' as *;
 
 .home {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
 
   .imgContainer {
-    margin-top: 4rem;
-
     display: flex;
     justify-content: center;
+    margin-top: 4rem;
 
     .laptopImg {
-      height: 60vh;
       z-index: 0;
+      height: 60vh;
     }
 
     .typingImg {
@@ -31,9 +30,9 @@
 
   .arButton {
     position: fixed;
-    left: 0;
-    bottom: 0;
     z-index: 2;
+    bottom: 0;
+    left: 0;
 
     .arImg {
       height: 30vh;
@@ -45,15 +44,15 @@
 
     @media only screen and (max-width: $width-tablet) {
       position: relative;
-      left: unset;
       bottom: unset;
+      left: unset;
     }
   }
 
   .label {
     font-size: 6rem;
-    line-height: 6rem;
     font-weight: 600;
+    line-height: 6rem;
     color: $dark-blue;
     text-align: center;
 

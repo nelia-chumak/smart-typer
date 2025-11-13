@@ -1,4 +1,4 @@
-import { SkillLessonStatistics } from 'common/types/types';
+import { SkillLessonStatistics } from 'common/types/types.js';
 
 type SkillKnownProbabilityForLesson = {
   skillId: SkillLessonStatistics['skillId'];

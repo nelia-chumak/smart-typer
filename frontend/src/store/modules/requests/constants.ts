@@ -56,8 +56,7 @@ const actions = {
   ...lessonsActions,
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AnyAsyncThunk = AsyncThunk<any, any, AsyncThunkOptions>;
+type AnyAsyncThunk = AsyncThunk<unknown, unknown, AsyncThunkOptions>;
 
 const requestActions = Object.values(actions).filter((action) => {
   const type = (action as AnyAsyncThunk).typePrefix;

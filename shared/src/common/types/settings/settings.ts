@@ -1,1 +1,1 @@
-export * from './settings-dto/settings-dto.type';
+export * from './settings-dto/settings-dto.type.js';

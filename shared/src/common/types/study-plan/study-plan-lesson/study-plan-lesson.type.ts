@@ -1,4 +1,4 @@
-import { LessonDto } from 'common/types/types';
+import { LessonDto } from 'common/types/types.js';
 
 type StudyPlanLesson = LessonDto & {
   averageSpeed: number;

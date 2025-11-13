@@ -1,11 +1,12 @@
-import { AhpSkillLevel, PairwiseComparisonMatrix } from 'common/types/types';
+import { AhpSkillLevel, PairwiseComparisonMatrix } from 'common/types/types.js';
 
 const calculateCriterionPairwiseComparisonMatrix = (
   skills: AhpSkillLevel[],
 ): PairwiseComparisonMatrix => {
-  const matrix = new Array(skills.length)
-    .fill(0)
-    .map(() => new Array(skills.length).fill(0)) as PairwiseComparisonMatrix;
+  const matrix: PairwiseComparisonMatrix = Array.from(
+    { length: skills.length },
+    () => Array.from({ length: skills.length }, () => 0),
+  );
 
   for (let i = 0; i < skills.length; i++) {
     const firstSkillLevel = skills[i].level;

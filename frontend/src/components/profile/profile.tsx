@@ -1,16 +1,4 @@
-import _ from 'lodash';
-import { FC, UserDto } from 'common/types/types';
-import {
-  useState,
-  useEffect,
-  useParams,
-  useDispatch,
-  useSelector,
-  useRef,
-  useForm,
-  useNavigate,
-} from 'hooks/hooks';
-import { profile as profileActions } from 'store/modules/actions';
+import { ALLOWED_FILE_TYPES, MAX_FILE_SIZE } from 'common/constants/constants';
 import {
   AppRoute,
   AvatarSize,
@@ -20,28 +8,40 @@ import {
   FormFieldType,
   SpinnerSize,
   UserKey,
+  ValidationErrorMessage,
 } from 'common/enums/enums';
-import { updateUserInfoSchema } from 'validation-schemas/validation-schemas';
-import { MAX_FILE_SIZE, ALLOWED_FILE_TYPES } from 'common/constants/constants';
-import { RBForm } from 'components/external/external';
+import { FC, UserDto } from 'common/types/types';
 import {
   Avatar,
+  Button,
+  ContentWrapper,
   FormField,
   Spinner,
-  ContentWrapper,
-  Button,
 } from 'components/common/common';
-import { clsx, bytesToMegabytes, replaceRouteIdParam } from 'helpers/helpers';
+import { RBForm } from 'components/external/external';
+import { bytesToMegabytes, clsx, replaceRouteIdParam } from 'helpers/helpers';
+import {
+  useDispatch,
+  useEffect,
+  useForm,
+  useNavigate,
+  useParams,
+  useRef,
+  useSelector,
+  useState,
+} from 'hooks/hooks';
+import _ from 'lodash';
 import { notification as notificationService } from 'services/services';
-import { ValidationErrorMessage } from 'common/enums/enums';
-import { CropAvatar, Statistics, Rating } from './components/components';
+import { profile as profileActions } from 'store/modules/actions';
+import { updateUserInfoSchema } from 'validation-schemas/validation-schemas';
+import { CropAvatar, Rating, Statistics } from './components/components';
 
 import styles from './styles.module.scss';
 
 const Profile: FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const {
     currentUserId,
@@ -198,7 +198,6 @@ const Profile: FC = () => {
               type={FormFieldType.FILE}
               register={{
                 name: UserKey.PHOTO_URL,
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
                 onChange: handleFileSelected,
               }}

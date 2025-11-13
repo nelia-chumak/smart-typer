@@ -1,9 +1,9 @@
+import { PairwiseComparisonMatrix } from 'common/types/types.js';
 import * as math from 'mathjs';
-import { PairwiseComparisonMatrix } from 'common/types/types';
 
 const calculateLambdaMax = (matrix: PairwiseComparisonMatrix): number => {
   const accuracy = 0.000000001;
-  const xStart = Array(matrix.length).fill(1);
+  const xStart = Array.from({ length: matrix.length }, () => 1);
   let xPrev = xStart;
   let xCurrent = xStart;
   let prevRatio = 0;

@@ -1,4 +1,4 @@
-import { FC, VoidAction } from 'common/types/types';
+import { FC, JSX, VoidAction } from 'common/types/types';
 import { CardHeaderColor, CardSize } from 'common/enums/enums';
 import { clsx } from 'helpers/helpers';
 import { Button } from 'components/common/common';

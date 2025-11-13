@@ -1,10 +1,10 @@
-import { BktPayload, BktResult } from 'common/types/types';
+import { BktPayload, BktResult } from 'common/types/types.js';
 import {
   calculateGuessProbability,
   calculateSlipProbability,
   calculateLearnedProbability,
   calculateWillLearnProbability,
-} from 'helpers/helpers';
+} from 'helpers/helpers.js';
 
 const bkt = (payload: BktPayload): BktResult => {
   const skillsWillLearnProbability = calculateWillLearnProbability(payload);

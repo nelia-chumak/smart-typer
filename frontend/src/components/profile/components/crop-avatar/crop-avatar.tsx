@@ -1,9 +1,9 @@
-import { ReactCrop } from 'components/external/external';
-import { useMemo, useState } from 'hooks/hooks';
+import { CROPPED_IMAGE_TYPE } from 'common/constants/constants';
 import { FC, VoidAction } from 'common/types/types';
 import { Modal } from 'components/common/common';
+import { ReactCrop } from 'components/external/external';
 import { canvasToBlob, canvasToDataUrl } from 'helpers/helpers';
-import { CROPPED_IMAGE_TYPE } from 'common/constants/constants';
+import { useMemo, useState } from 'hooks/hooks';
 import { Crop, CropData } from '../../common/types/types';
 
 import styles from './styles.module.scss';
@@ -21,10 +21,12 @@ const CropAvatar: FC<Props> = ({
   onClose,
   onUpdateAvatar,
 }) => {
-  const [crop, setCrop] = useState<Partial<Crop>>({
+  const [crop, setCrop] = useState<Crop>({
     unit: '%',
+    x: 0,
+    y: 0,
+    width: 130,
     height: 130,
-    aspect: 1,
   });
   const [image, setImage] = useState<HTMLImageElement | null>(null);
 
@@ -103,13 +105,14 @@ const CropAvatar: FC<Props> = ({
       className={styles.cropModal}
     >
       <ReactCrop
-        src={src}
-        onChange={onCropChange}
         crop={crop}
+        onChange={onCropChange}
         keepSelection
         circularCrop
-        onImageLoaded={onImageLoaded}
-      />
+        aspect={1}
+      >
+        <img src={src} onLoad={(e) => onImageLoaded(e.currentTarget)} alt="" />
+      </ReactCrop>
     </Modal>
   );
 };

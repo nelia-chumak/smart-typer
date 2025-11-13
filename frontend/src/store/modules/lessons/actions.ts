@@ -158,7 +158,7 @@ class Lessons {
         misclicks,
         timestamps,
       });
-      dispatch(this.loadStudyPlan);
+      dispatch(this.loadStudyPlan());
     },
   );
 

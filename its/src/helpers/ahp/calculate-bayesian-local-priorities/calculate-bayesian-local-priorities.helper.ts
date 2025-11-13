@@ -2,8 +2,8 @@ import {
   AhpLesson,
   CriterionPrioritiesVector,
   PrioritiesVector,
-} from 'common/types/types';
-import { calculateSimilarityCriterion } from 'helpers/helpers';
+} from 'common/types/types.js';
+import { calculateSimilarityCriterion } from 'helpers/helpers.js';
 
 const calculateBayesianLocalPriorities = (
   oldCriterionLocalPrioritiesWithIds: CriterionPrioritiesVector,

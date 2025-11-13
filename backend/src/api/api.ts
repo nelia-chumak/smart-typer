@@ -37,6 +37,6 @@ router.use(
   }),
 );
 
-router.use('/*', getErrorHandlerMiddleware({ loggerService }));
+router.use(getErrorHandlerMiddleware({ loggerService }));
 
 export { router };

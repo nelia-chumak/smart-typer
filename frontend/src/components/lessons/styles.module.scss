@@ -1,16 +1,15 @@
-@import 'src/assets/css/variables';
+@use 'assets/css/variables' as *;
 
 .lessons {
-  height: 100%;
   width: 100%;
+  height: 100%;
   padding: 3rem;
 
   .actions {
     display: grid;
     grid-template-columns: 1fr 1fr 4fr;
-    justify-items: flex-end;
-    align-items: center;
     gap: 3rem;
+    place-items: center flex-end;
 
     .filter {
       width: 100%;
@@ -18,31 +17,35 @@
   }
 
   .createLessonButton {
-    height: 3.5rem;
-    width: 12rem;
-    font-size: $middle-font-size;
-    background-color: $main-green;
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+
+    width: 12rem;
+    height: 3.5rem;
+
+    font-size: $middle-font-size;
     color: $white;
+
+    background-color: $main-green;
   }
 
   .spinnerContainer {
     display: flex;
-    width: 100%;
     justify-content: center;
+    width: 100%;
   }
 
   .infiniteScroll {
     overflow: unset !important;
 
     .lessonCards {
-      width: 100%;
-      align-items: flex-end;
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
       gap: 0.75rem 3rem;
+      align-items: flex-end;
+
+      width: 100%;
     }
   }
 }

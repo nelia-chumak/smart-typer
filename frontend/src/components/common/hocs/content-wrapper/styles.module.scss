@@ -1,10 +1,10 @@
-@import 'src/assets/css/variables';
+@use 'assets/css/variables' as *;
 
 .contentWrapper {
-  background-color: $light-green;
   margin: 3rem auto;
   padding: 3rem;
   border-radius: 2px;
+  background-color: $light-green;
 
   &.light {
     box-shadow: $content-wrapper-light-shadow;

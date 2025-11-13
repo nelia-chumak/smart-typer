@@ -1,10 +1,10 @@
-import { yup } from 'dependencies/dependencies';
-import { ValidationErrorMessage } from 'common/enums/enums';
-import { emailSchema } from 'validation-schemas/fields/fields';
 import {
   MAX_SHARE_ROOM_URL_LENGTH,
   MIN_SHARE_ROOM_URL_LENGTH,
-} from 'common/constants/constants';
+} from 'common/constants/constants.js';
+import { ValidationErrorMessage } from 'common/enums/enums.js';
+import { yup } from 'dependencies/dependencies.js';
+import { emailSchema } from 'validation-schemas/fields/fields.js';
 
 const sendShareRoomUrlSchema = yup
   .object()
