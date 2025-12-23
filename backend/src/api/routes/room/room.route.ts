@@ -1,8 +1,16 @@
+import { getValidationMiddleware } from 'api/middlewares/middlewares';
+import { IRequestWithUser } from 'common/interfaces/interfaces';
+import {
+  CreateRoomRequestDto,
+  RequiredLessonIdDto,
+  RoomDto,
+  RoomIdDto,
+  RoomIdParticipantIdDto,
+  SendRoomUrlToEmailsRequestDto,
+  ShareRoomUrlDto,
+} from 'common/types/types';
 import { Router } from 'express';
 import { room as roomService } from 'services/services';
-import { Abstract } from '../abstract/abstract.route';
-import { IRequestWithUser } from 'common/interfaces/interfaces';
-import { getValidationMiddleware } from 'api/middlewares/middlewares';
 import {
   addRoomLessonIdParamsSchema,
   addRoomParticipantParamsSchema,
@@ -13,6 +21,7 @@ import {
   removeRoomParticipantParamsSchema,
   sendShareRoomUrlBodySchema,
 } from 'validation-schemas/validation-schemas';
+import { Abstract } from '../abstract/abstract.route';
 
 type Constructor = {
   roomService: typeof roomService;
@@ -35,7 +44,7 @@ class Room extends Abstract {
     router.get(
       '/:roomId/share-url',
       this._getValidationMiddleware({ params: getRoomShareUrlParamsSchema }),
-      this._run((req) => {
+      this._run<RoomIdDto, ShareRoomUrlDto>((req) => {
         const roomId = Number(req.params.roomId);
         return this._roomService.getShareUrl(roomId);
       }),
@@ -44,16 +53,15 @@ class Room extends Abstract {
     router.post(
       '/share-url',
       this._getValidationMiddleware({ body: sendShareRoomUrlBodySchema }),
-      this._run((req: IRequestWithUser) => {
-        const userId = req.userId;
-        return this._roomService.sendShareUrlToEmails(userId, req.body);
-      }),
+      this._run<SendRoomUrlToEmailsRequestDto, void, IRequestWithUser>((req) =>
+        this._roomService.sendShareUrlToEmails(req.userId, req.body),
+      ),
     );
 
     router.post(
       '/:roomId/participants',
       this._getValidationMiddleware({ params: addRoomParticipantParamsSchema }),
-      this._run((req: IRequestWithUser) => {
+      this._run<RoomIdDto, void, IRequestWithUser>((req) => {
         const roomId = Number(req.params.roomId);
         return this._roomService.addParticipant(roomId, req.userId);
       }),
@@ -64,7 +72,7 @@ class Room extends Abstract {
       this._getValidationMiddleware({
         params: removeRoomParticipantParamsSchema,
       }),
-      this._run((req: IRequestWithUser) => {
+      this._run<RoomIdParticipantIdDto, void, IRequestWithUser>((req) => {
         const roomId = Number(req.params.roomId);
         return this._roomService.removeParticipant(roomId, req.userId);
       }),
@@ -73,7 +81,7 @@ class Room extends Abstract {
     router.post(
       '/:roomId/lesson',
       this._getValidationMiddleware({ params: addRoomLessonIdParamsSchema }),
-      this._run((req) => {
+      this._run<RoomIdDto, RequiredLessonIdDto>((req) => {
         const roomId = Number(req.params.roomId);
         return this._roomService.addLessonId(roomId);
       }),
@@ -82,7 +90,7 @@ class Room extends Abstract {
     router.delete(
       '/:roomId/lesson',
       this._getValidationMiddleware({ params: removeRoomLessonIdParamsSchema }),
-      this._run((req) => {
+      this._run<RoomIdDto, void>((req) => {
         const roomId = Number(req.params.roomId);
         return this._roomService.removeLessonId(roomId);
       }),
@@ -91,7 +99,7 @@ class Room extends Abstract {
     router.get(
       '/:roomId',
       this._getValidationMiddleware({ params: getRoomParamsSchema }),
-      this._run((req) => {
+      this._run<RoomIdDto, RoomDto>((req) => {
         const roomId = Number(req.params.roomId);
         return this._roomService.get(roomId);
       }),
@@ -99,13 +107,17 @@ class Room extends Abstract {
 
     router.get(
       '/',
-      this._run(() => this._roomService.getAllAvailable()),
+      this._run<undefined, RoomDto[]>(() =>
+        this._roomService.getAllAvailable(),
+      ),
     );
 
     router.post(
       '/',
       this._getValidationMiddleware({ body: createRoomBodySchema }),
-      this._run((req) => this._roomService.create(req.body)),
+      this._run<CreateRoomRequestDto, RoomDto>((req) =>
+        this._roomService.create(req.body),
+      ),
     );
 
     return router;

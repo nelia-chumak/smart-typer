@@ -1,16 +1,27 @@
-import { Router } from 'express';
 import { getValidationMiddleware } from 'api/middlewares/middlewares';
+import { IRequestWithUser } from 'common/interfaces/interfaces';
+import {
+  GoogleLogInCodeRequestDto,
+  GoogleLogInUrlResponseDto,
+  LogInRequestDto,
+  RefreshTokenRequestDto,
+  RegisterRequestDto,
+  ResetPasswordRequestDto,
+  SetPasswordRequestDto,
+  TokensResponseDto,
+  UserAuthInfoResponseDto,
+} from 'common/types/types';
+import { Router } from 'express';
 import { auth as authService, token as tokenService } from 'services/services';
 import {
-  signUpBodySchema,
   logInBodySchema,
+  logInGoogleBodySchema,
+  refreshTokensBodySchema,
   resetPasswordBodySchema,
   setPasswordBodySchema,
-  refreshTokensBodySchema,
-  logInGoogleBodySchema,
+  signUpBodySchema,
 } from 'validation-schemas/validation-schemas';
 import { Abstract } from '../abstract/abstract.route';
-import { IRequestWithUser } from 'common/interfaces/interfaces';
 
 type Constructor = {
   authService: typeof authService;
@@ -36,36 +47,46 @@ class Auth extends Abstract {
     router.post(
       '/register',
       this._getValidationMiddleware({ body: signUpBodySchema }),
-      this._run((req) => this._authService.register(req.body)),
+      this._run<RegisterRequestDto, UserAuthInfoResponseDto>((req) =>
+        this._authService.register(req.body),
+      ),
     );
 
     router.post(
       '/log-in',
       this._getValidationMiddleware({ body: logInBodySchema }),
-      this._run((req) => this._authService.logIn(req.body)),
+      this._run<LogInRequestDto, UserAuthInfoResponseDto>((req) =>
+        this._authService.logIn(req.body),
+      ),
     );
 
     router.post(
       '/reset-password',
       this._getValidationMiddleware({ body: resetPasswordBodySchema }),
-      this._run((req) => this._authService.resetPassword(req.body)),
+      this._run<ResetPasswordRequestDto, void>((req) =>
+        this._authService.resetPassword(req.body),
+      ),
     );
 
     router.post(
       '/set-password',
       this._getValidationMiddleware({ body: setPasswordBodySchema }),
-      this._run((req) => this._authService.setPassword(req.body)),
+      this._run<SetPasswordRequestDto, UserAuthInfoResponseDto>((req) =>
+        this._authService.setPassword(req.body),
+      ),
     );
 
     router.post(
       '/refresh',
       this._getValidationMiddleware({ body: refreshTokensBodySchema }),
-      this._run((req) => this._tokenService.refreshTokens(req.body)),
+      this._run<RefreshTokenRequestDto, TokensResponseDto>((req) =>
+        this._tokenService.refreshTokens(req.body),
+      ),
     );
 
     router.post(
       '/log-out',
-      this._run((req: IRequestWithUser) =>
+      this._run<unknown, void, IRequestWithUser>((req) =>
         this._authService.logOut(req.userId),
       ),
     );
@@ -73,12 +94,16 @@ class Auth extends Abstract {
     router.post(
       '/log-in/google',
       this._getValidationMiddleware({ body: logInGoogleBodySchema }),
-      this._run((req) => this._authService.logInGoogle(req.body)),
+      this._run<GoogleLogInCodeRequestDto, UserAuthInfoResponseDto>((req) =>
+        this._authService.logInGoogle(req.body),
+      ),
     );
 
     router.get(
       '/log-in/google',
-      this._run(() => this._authService.getLogInGoogleUrl()),
+      this._run<undefined, GoogleLogInUrlResponseDto>(() =>
+        this._authService.getLogInGoogleUrl(),
+      ),
     );
 
     return router;

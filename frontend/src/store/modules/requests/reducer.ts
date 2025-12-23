@@ -1,4 +1,3 @@
-/* eslint-disable prefer-spread */
 import { ReducerName } from 'common/enums/enums';
 import { createSlice, isAnyOf } from 'store/external/external';
 import {

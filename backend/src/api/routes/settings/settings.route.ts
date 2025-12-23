@@ -1,9 +1,10 @@
+import { getValidationMiddleware } from 'api/middlewares/middlewares';
+import { IRequestWithUser } from 'common/interfaces/interfaces';
+import { SettingsDto } from 'common/types/types';
 import { Router } from 'express';
 import { settings as settingsService } from 'services/services';
-import { IRequestWithUser } from 'common/interfaces/interfaces';
-import { Abstract } from '../abstract/abstract.route';
-import { getValidationMiddleware } from 'api/middlewares/middlewares';
 import { updateSettingsBodySchema } from 'validation-schemas/validation-schemas';
+import { Abstract } from '../abstract/abstract.route';
 
 type Constructor = {
   settingsService: typeof settingsService;
@@ -26,7 +27,7 @@ class Settings extends Abstract {
     router.put(
       '/',
       this._getValidationMiddleware({ body: updateSettingsBodySchema }),
-      this._run((req: IRequestWithUser) =>
+      this._run<Partial<SettingsDto>, SettingsDto, IRequestWithUser>((req) =>
         this._settingsService.updateByUserId(req.userId, req.body),
       ),
     );

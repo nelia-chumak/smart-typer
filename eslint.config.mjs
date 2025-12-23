@@ -2,6 +2,7 @@ import js from '@eslint/js';
 import prettier from 'eslint-config-prettier';
 import eslintImport from 'eslint-plugin-import';
 import react from 'eslint-plugin-react';
+import reactHooks from 'eslint-plugin-react-hooks';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
@@ -66,6 +67,12 @@ export default tseslint.config(
     files: ['backend/**/*.{ts,tsx}'],
     languageOptions: {
       globals: globals.node,
+    },
+  },
+  {
+    files: ['backend/src/services/**/*.{ts,tsx}'],
+    rules: {
+      '@typescript-eslint/require-await': 'off',
     },
   },
   {

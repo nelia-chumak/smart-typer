@@ -1,3 +1,4 @@
+import { JokeDto } from 'common/types/types';
 import { Router } from 'express';
 import { joke as jokeService } from 'services/services';
 import { Abstract } from '../abstract/abstract.route';
@@ -19,7 +20,7 @@ class Joke extends Abstract {
 
     router.get(
       '/random',
-      this._run(() => this._jokeService.getRandom()),
+      this._run<undefined, JokeDto>(() => this._jokeService.getRandom()),
     );
 
     return router;

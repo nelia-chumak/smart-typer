@@ -1,30 +1,44 @@
-import { Response, NextFunction, Request } from 'express';
-import { HttpCode, UserKey } from 'common/enums/enums';
+import { HttpCode } from 'common/enums/enums';
+import { NextFunction, Request, RequestHandler, Response } from 'express';
 
-class Abstract {
-  protected _run<T, R extends Request>(method: (req: R) => Promise<T>) {
+type RequestWithBody<TBody, TRequest> = Omit<
+  TRequest,
+  'body'
+> & {
+  body: TBody;
+};
+
+abstract class Abstract {
+  protected _run = <
+    TBody = unknown,
+    TResult = unknown,
+    TRequest extends Request = Request,
+  >(
+    method: (req: RequestWithBody<TBody, TRequest>) => Promise<TResult>,
+  ): RequestHandler => {
     return async (
       req: Request,
       res: Response,
       next: NextFunction,
     ): Promise<void> => {
       try {
-        const result = await method(req as R);
-        if (
-          result &&
-          Object.prototype.hasOwnProperty.call(result, UserKey.PASSWORD)
-        ) {
-          res.send({ ...result, password: null });
-        } else if (result) {
-          res.send(result);
-        } else {
-          res.sendStatus(HttpCode.NO_CONTENT);
+        const result = await method(req as RequestWithBody<TBody, TRequest>);
+
+        if (res.headersSent) {
+          return;
         }
-      } catch (err) {
-        next(err);
+
+        if (result === undefined || result === null) {
+          res.sendStatus(HttpCode.NO_CONTENT);
+          return;
+        }
+
+        res.send(result);
+      } catch (error) {
+        next(error);
       }
     };
-  }
+  };
 }
 
 export { Abstract };

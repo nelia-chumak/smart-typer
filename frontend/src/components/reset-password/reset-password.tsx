@@ -22,7 +22,7 @@ const ResetPassword: FC = () => {
   const handleSubmitForm = async (
     data: ResetPasswordRequestDto,
   ): Promise<void> => {
-     dispatch(authActions.resetPassword(data));
+    dispatch(authActions.resetPassword(data));
   };
 
   return (
