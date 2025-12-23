@@ -1,24 +1,22 @@
 import { CommonKey, HttpCode, HttpErrorMessage } from 'common/enums/enums';
 import {
+  GoogleLogInCodeRequestDto,
+  GoogleLogInUrlResponseDto,
   GoogleUser,
-  UserAuthInfoResponseDto,
-  UserDto,
-} from 'common/types/types';
-import {
   LogInRequestDto,
   RegisterRequestDto,
   ResetPasswordRequestDto,
   SetPasswordRequestDto,
-  GoogleLogInUrlResponseDto,
-  GoogleLogInCodeRequestDto,
+  UserAuthInfoResponseDto,
+  UserDto,
 } from 'common/types/types';
 import { HttpError } from 'exceptions/exceptions';
 import {
   hash as hashService,
-  user as userService,
-  token as tokenService,
   mailer as mailerService,
   oauth2 as oauth2Service,
+  token as tokenService,
+  user as userService,
 } from 'services/services';
 
 type Constructor = {
@@ -60,7 +58,7 @@ class Auth {
     } catch (error) {
       if (
         error instanceof HttpError &&
-        error.message === HttpErrorMessage.NO_USER_WITH_SUCH_ID
+        error.message === HttpErrorMessage.NO_SUCH_EMAIL
       ) {
         const hashedPassword = await this._hashService.hash(payload.password);
 
@@ -97,7 +95,7 @@ class Auth {
     } catch (error) {
       if (
         error instanceof HttpError &&
-        error.message === HttpErrorMessage.NO_USER_WITH_SUCH_ID
+        error.message === HttpErrorMessage.NO_SUCH_EMAIL
       ) {
         throw new HttpError({
           status: HttpCode.CONFLICT,
@@ -123,7 +121,7 @@ class Auth {
     } catch (error) {
       if (
         error instanceof HttpError &&
-        error.message === HttpErrorMessage.NO_USER_WITH_SUCH_ID
+        error.message === HttpErrorMessage.NO_SUCH_EMAIL
       ) {
         throw new HttpError({
           status: HttpCode.CONFLICT,

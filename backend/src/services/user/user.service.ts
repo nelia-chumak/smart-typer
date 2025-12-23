@@ -98,7 +98,7 @@ class User {
     if (!user) {
       throw new HttpError({
         status: HttpCode.NOT_FOUND,
-        message: HttpErrorMessage.NO_USER_WITH_SUCH_ID,
+        message: HttpErrorMessage.NO_SUCH_EMAIL,
       });
     }
 
