@@ -15,10 +15,10 @@ const getErrorHandlerMiddleware = (opts: Options): ErrorRequestHandler => {
     res: Response,
     __next: NextFunction,
   ): void => {
-    const isHttpError = err.name === 'HttpError';
+    const isHttpError = err instanceof HttpError;
 
     const status = isHttpError
-      ? (err as HttpError).status
+      ? err.status
       : HttpCode.INTERNAL_SERVER_ERROR;
     const message = isHttpError
       ? err.message

@@ -24,7 +24,7 @@ class Socket {
     if (!this._io) {
       throw new Error(SocketErrorMessage.NO_SOCKET_SERVICE_PROVIDED);
     }
-    const io = this._io as Server;
+    const io = this._io;
 
     socket.on(SocketEvent.JOIN_ROOM, async ({ roomId }: RoomIdDto) => {
       await socket.join(String(roomId));

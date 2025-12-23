@@ -1,11 +1,11 @@
-import { HttpErrorMessage, ReducerName } from 'common/enums/enums';
+import { ReducerName } from 'common/enums/enums';
 import { UserDto } from 'common/types/types';
 import { createSlice, isAnyOf } from 'store/external/external';
 import { auth as authActions } from './actions';
 
 type State = {
   user: UserDto | null;
-  error: HttpErrorMessage | null;
+  error: string | null;
   googleUrl: string | null;
 };
 

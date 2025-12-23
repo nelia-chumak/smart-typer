@@ -1,21 +1,24 @@
-import { createAction, createAsyncThunk } from 'store/external/external';
 import {
   HttpErrorMessage,
-  StorageKey,
   NotificationMessage,
+  StorageKey,
 } from 'common/enums/enums';
 import {
-  UserDto,
+  GoogleLogInCodeRequestDto,
+  GoogleLogInUrlResponseDto,
   LogInRequestDto,
   RegisterRequestDto,
-  GoogleLogInCodeRequestDto,
-  SetPasswordRequestDto,
   ResetPasswordRequestDto,
-  GoogleLogInUrlResponseDto,
+  SetPasswordRequestDto,
+  UserDto,
 } from 'common/types/types';
 import { HttpError } from 'exceptions/exceptions';
+import {
+  handleExternalError,
+  hasErrorGivenHttpErrorMessage,
+} from 'helpers/helpers';
+import { createAction, createAsyncThunk } from 'store/external/external';
 import { ActionType } from './action-type';
-import { handleExternalError } from 'helpers/helpers';
 
 class Auth {
   public logIn = createAsyncThunk(
@@ -39,13 +42,15 @@ class Auth {
         localStorageService.setItem(StorageKey.REFRESH_TOKEN, refreshToken);
         dispatch(settingsActions.setAll(settings));
         dispatch(racingActions.setPersonalRoom(personalRoom));
-        dispatch(lessonsActions.loadLessons());
+        void dispatch(lessonsActions.loadLessons());
         return user;
       } catch (error) {
-        const isHttpError = error instanceof HttpError;
         if (
-          isHttpError &&
-          error.message === HttpErrorMessage.INVALID_LOG_IN_DATA
+          error instanceof HttpError &&
+          hasErrorGivenHttpErrorMessage(
+            error,
+            HttpErrorMessage.INVALID_LOG_IN_DATA,
+          )
         ) {
           dispatch(this.setError(error.message));
         } else {
@@ -55,12 +60,9 @@ class Auth {
     },
   );
 
-  public setError = createAction(
-    ActionType.SET_ERROR,
-    (authError: HttpErrorMessage) => ({
-      payload: authError,
-    }),
-  );
+  public setError = createAction(ActionType.SET_ERROR, (authError: string) => ({
+    payload: authError,
+  }));
 
   public register = createAsyncThunk(
     ActionType.REGISTER,
@@ -83,13 +85,15 @@ class Auth {
         localStorageService.setItem(StorageKey.REFRESH_TOKEN, refreshToken);
         dispatch(settingsActions.setAll(settings));
         dispatch(racingActions.setPersonalRoom(personalRoom));
-        dispatch(lessonsActions.loadLessons());
+        void dispatch(lessonsActions.loadLessons());
         return user;
       } catch (error) {
-        const isHttpError = error instanceof HttpError;
         if (
-          isHttpError &&
-          error.message === HttpErrorMessage.EMAIL_ALREADY_EXISTS
+          error instanceof HttpError &&
+          hasErrorGivenHttpErrorMessage(
+            error,
+            HttpErrorMessage.EMAIL_ALREADY_EXISTS,
+          )
         ) {
           dispatch(this.setError(error.message));
         } else {
@@ -146,7 +150,7 @@ class Auth {
       localStorageService.setItem(StorageKey.REFRESH_TOKEN, refreshToken);
       dispatch(settingsActions.setAll(settings));
       dispatch(racingActions.setPersonalRoom(personalRoom));
-      dispatch(lessonsActions.loadLessons());
+      void dispatch(lessonsActions.loadLessons());
       return user;
     },
   );
@@ -178,7 +182,7 @@ class Auth {
         localStorageService.setItem(StorageKey.REFRESH_TOKEN, newRefreshToken);
         dispatch(settingsActions.setAll(settings));
         dispatch(racingActions.setPersonalRoom(personalRoom));
-        dispatch(lessonsActions.loadLessons());
+        void dispatch(lessonsActions.loadLessons());
         return user;
       }
     },
@@ -201,8 +205,10 @@ class Auth {
         await authApiService.resetPassword(payload);
         notificationService.info(NotificationMessage.RESET_PASSWORD_SENT);
       } catch (error) {
-        const isHttpError = error instanceof HttpError;
-        if (isHttpError && error.message === HttpErrorMessage.NO_SUCH_EMAIL) {
+        if (
+          error instanceof HttpError &&
+          hasErrorGivenHttpErrorMessage(error, HttpErrorMessage.NO_SUCH_EMAIL)
+        ) {
           dispatch(this.setError(error.message));
         } else {
           throw error;
@@ -234,7 +240,7 @@ class Auth {
       localStorageService.setItem(StorageKey.REFRESH_TOKEN, refreshToken);
       dispatch(settingsActions.setAll(settings));
       dispatch(racingActions.setPersonalRoom(personalRoom));
-      dispatch(lessonsActions.loadLessons());
+      void dispatch(lessonsActions.loadLessons());
       notificationService.success(NotificationMessage.NEW_PASSWORD_SAVED);
       return user;
     },
@@ -252,7 +258,9 @@ class Auth {
         const { url } = await authApiService.getLogInGoogleUrl();
         return url;
       } catch (error) {
-        handleExternalError(error, notificationService.error);
+        handleExternalError(error, (message) =>
+          notificationService.error(message),
+        );
       }
     },
   );

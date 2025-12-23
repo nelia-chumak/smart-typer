@@ -2,10 +2,11 @@ import { ALLOWED_FILE_TYPES, MAX_FILE_SIZE } from 'common/constants/constants';
 import {
   HttpCode,
   HttpErrorMessage,
+  MulterErrorMessageByCode,
   ValidationErrorMessage,
 } from 'common/enums/enums';
 import { HttpError } from 'exceptions/exceptions';
-import { Request, Response, RequestHandler, NextFunction } from 'express';
+import { NextFunction, Request, RequestHandler, Response } from 'express';
 import { megabytesToBytes } from 'helpers/helpers';
 import multer, { FileFilterCallback, MulterError } from 'multer';
 
@@ -45,7 +46,8 @@ const getErrorHandler = (next: NextFunction) => {
     if (error instanceof MulterError) {
       throw new HttpError({
         status: HttpCode.BAD_REQUEST,
-        message: error.message,
+        message:
+          MulterErrorMessageByCode[error.code] ?? 'Unknown file upload error.',
       });
     } else if (error) {
       throw new HttpError({

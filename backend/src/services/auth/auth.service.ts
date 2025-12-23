@@ -11,6 +11,7 @@ import {
   UserDto,
 } from 'common/types/types';
 import { HttpError } from 'exceptions/exceptions';
+import { hasErrorGivenHttpErrorMessage } from 'helpers/helpers';
 import {
   hash as hashService,
   mailer as mailerService,
@@ -57,8 +58,7 @@ class Auth {
       });
     } catch (error) {
       if (
-        error instanceof HttpError &&
-        error.message === HttpErrorMessage.NO_SUCH_EMAIL
+        hasErrorGivenHttpErrorMessage(error, HttpErrorMessage.NO_SUCH_EMAIL)
       ) {
         const hashedPassword = await this._hashService.hash(payload.password);
 
@@ -94,8 +94,7 @@ class Auth {
       return this._userService.getAuthInfoByEmail(user.email);
     } catch (error) {
       if (
-        error instanceof HttpError &&
-        error.message === HttpErrorMessage.NO_SUCH_EMAIL
+        hasErrorGivenHttpErrorMessage(error, HttpErrorMessage.NO_SUCH_EMAIL)
       ) {
         throw new HttpError({
           status: HttpCode.CONFLICT,
@@ -120,8 +119,7 @@ class Auth {
       });
     } catch (error) {
       if (
-        error instanceof HttpError &&
-        error.message === HttpErrorMessage.NO_SUCH_EMAIL
+        hasErrorGivenHttpErrorMessage(error, HttpErrorMessage.NO_SUCH_EMAIL)
       ) {
         throw new HttpError({
           status: HttpCode.CONFLICT,
@@ -181,8 +179,7 @@ class Auth {
       return user;
     } catch (error) {
       if (
-        error instanceof HttpError &&
-        error.message === HttpErrorMessage.NO_SUCH_EMAIL
+        hasErrorGivenHttpErrorMessage(error, HttpErrorMessage.NO_SUCH_EMAIL)
       ) {
         const newUser = await this._userService.create({
           nickname: name,
