@@ -90,7 +90,7 @@ const Room: FC = () => {
   const handleToggleIsReady = (): void => {
     if (currentParticipant) {
       if (!content) {
-        dispatch(racingActions.addLessonId({ roomId }));
+        void dispatch(racingActions.addLessonId({ roomId }));
       }
       dispatch(
         racingActions.toggleCurrentParticipantIsReady({
@@ -110,26 +110,30 @@ const Room: FC = () => {
     quatre?: number,
   ): void => {
     if (!gameTimerValue || !quatre) {
-      dispatch(racingActions.loadCommentatorText(CommentatorEvent.GAME_START));
+      void dispatch(
+        racingActions.loadCommentatorText(CommentatorEvent.GAME_START),
+      );
       return;
     }
     if (gameTimerValue === quatre || gameTimerValue === 3 * quatre) {
-      dispatch(racingActions.loadCommentatorText(CommentatorEvent.JOKE));
+      void dispatch(racingActions.loadCommentatorText(CommentatorEvent.JOKE));
     }
     if (gameTimerValue === 2 * quatre) {
-      dispatch(racingActions.loadCommentatorText(CommentatorEvent.GAME_MIDDLE));
+      void dispatch(
+        racingActions.loadCommentatorText(CommentatorEvent.GAME_MIDDLE),
+      );
     }
   };
 
   const handleResults = (): void => {
     setIsResultsModalVisible(true);
-    dispatch(lessonsActions.sendLessonResult());
+    void dispatch(lessonsActions.sendLessonResult());
   };
 
   const handleCloseResultsModal = async (): Promise<void> => {
     setIsResultsModalVisible(false);
-    dispatch(racingActions.resetCurrentRoomToDefault());
-    dispatch(racingActions.removeLessonId({ roomId }));
+    void dispatch(racingActions.resetCurrentRoomToDefault());
+    void dispatch(racingActions.removeLessonId({ roomId }));
   };
 
   const handleCommentatorTextChange = (): void => {
@@ -152,7 +156,7 @@ const Room: FC = () => {
 
   useEffect(() => {
     if (roomId) {
-      dispatch(racingActions.loadCurrentRoom({ roomId }));
+      void dispatch(racingActions.loadCurrentRoom({ roomId }));
     }
   }, [roomId]);
 
@@ -168,7 +172,9 @@ const Room: FC = () => {
   useEffect(() => {
     return (): void => {
       speechSynthesis.cancel();
-      dispatch(racingActions.leaveRoom({ roomId, participantId: userId }));
+      void dispatch(
+        racingActions.leaveRoom({ roomId, participantId: userId }),
+      );
       dispatch(racingActions.resetAllExceptPersonal());
     };
   }, []);

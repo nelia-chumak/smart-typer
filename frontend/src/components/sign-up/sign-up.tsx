@@ -34,7 +34,7 @@ const SignUp: FC = () => {
   }, [authError, user?.id]);
 
   const handleSubmitForm = (data: RegisterRequestDto): void => {
-    dispatch(authActions.register(data));
+    void dispatch(authActions.register(data));
   };
 
   return (

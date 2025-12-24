@@ -47,7 +47,7 @@ const Settings: FC = () => {
   });
 
   const handleSubmitForm = (data: SettingsDto): void => {
-    dispatch(settingsActions.update(data));
+    void dispatch(settingsActions.update(data));
   };
 
   return (

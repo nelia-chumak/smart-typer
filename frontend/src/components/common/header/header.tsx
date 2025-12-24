@@ -14,7 +14,7 @@ const Header: FC = () => {
   const userId = user.id;
 
   const handleLogout = (): void => {
-    dispatch(authActions.logOut());
+    void dispatch(authActions.logOut());
   };
 
   const profileDropdownLinks: DropdownLink[] = [

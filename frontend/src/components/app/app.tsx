@@ -53,7 +53,7 @@ const App: FC = () => {
 
   useEffect(() => {
     if (needToLoadUser) {
-      dispatch(authActions.loadCurrentUser());
+      void dispatch(authActions.loadCurrentUser());
     }
   }, []);
 

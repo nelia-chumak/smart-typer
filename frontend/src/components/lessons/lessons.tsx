@@ -72,7 +72,7 @@ const Lessons: FC = () => {
   };
 
   const handleCreateLessonSubmit = (payload: CreateLessonRequestDto): void => {
-    dispatch(lessonsActions.create(payload));
+    void dispatch(lessonsActions.create(payload));
     setIsCreateLessonModalVisible(false);
   };
 
@@ -83,16 +83,16 @@ const Lessons: FC = () => {
     ) as Pick<IPaginationRequest, PaginationKey.OFFSET> & LessonFilters;
     params.offset = lessons.length;
 
-    dispatch(lessonsActions.loadMoreLessons(params));
+    void dispatch(lessonsActions.loadMoreLessons(params));
   };
 
   const handleLoadFilteredLessons = (): void => {
     const params = getFiltersParams(contentTypeFilter, creatorTypeFilter);
-    dispatch(lessonsActions.loadLessons(params));
+    void dispatch(lessonsActions.loadLessons(params));
   };
 
   const handleDeleteLesson = (lessonId: LessonDto[CommonKey.ID]): void => {
-    dispatch(lessonsActions.delete({ lessonId }));
+    void dispatch(lessonsActions.delete({ lessonId }));
   };
 
   useEffect(() => {

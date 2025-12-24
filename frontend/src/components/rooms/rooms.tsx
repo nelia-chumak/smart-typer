@@ -41,11 +41,11 @@ const Rooms: FC = () => {
   };
 
   const handleCreateRoomSubmit = (payload: CreateRoomRequestDto): void => {
-    dispatch(racingActions.createRoom(payload));
+    void dispatch(racingActions.createRoom(payload));
   };
 
   useEffect(() => {
-    dispatch(racingActions.loadAvailableRooms());
+    void dispatch(racingActions.loadAvailableRooms());
     return (): void => {
       dispatch(racingActions.resetAvailableRooms());
     };

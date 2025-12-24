@@ -27,7 +27,7 @@ const StudyPlan: FC = () => {
   };
 
   useEffect(() => {
-    dispatch(lessonsActions.loadStudyPlan());
+    void dispatch(lessonsActions.loadStudyPlan());
     return (): void => {
       dispatch(lessonsActions.resetStudyPlan());
     };

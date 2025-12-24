@@ -1,16 +1,16 @@
-import { TypingCanvas, Spinner } from 'components/common/common';
 import { AppRoute, SpinnerSize } from 'common/enums/enums';
 import { FC, UserDto } from 'common/types/types';
+import { Spinner, TypingCanvas } from 'components/common/common';
 import {
-  useParams,
   useDispatch,
-  useNavigate,
-  useSelector,
   useEffect,
+  useNavigate,
+  useParams,
+  useSelector,
   useState,
 } from 'hooks/hooks';
-import { ResultsModal } from './components/components';
 import { lessons as lessonsActions } from 'store/modules/actions';
+import { ResultsModal } from './components/components';
 import { mapLessonStatisticsToResults } from './helpers/helpers';
 
 import styles from './styles.module.scss';
@@ -57,7 +57,7 @@ const Lesson: FC = () => {
 
   const handleResults = (): void => {
     setIsResultsModalVisible(true);
-    dispatch(lessonsActions.sendLessonResult());
+    void dispatch(lessonsActions.sendLessonResult());
   };
 
   const handleCloseResultsModal = async (): Promise<void> => {
@@ -67,7 +67,7 @@ const Lesson: FC = () => {
 
   useEffect(() => {
     if (lessonId) {
-      dispatch(lessonsActions.loadCurrent({ lessonId }));
+      void dispatch(lessonsActions.loadCurrent({ lessonId }));
     }
   }, [lessonId]);
 

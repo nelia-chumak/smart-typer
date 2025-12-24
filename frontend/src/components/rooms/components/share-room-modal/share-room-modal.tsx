@@ -53,7 +53,7 @@ const ShareRoomModal: FC<Props> = ({
   };
 
   const handleSend = (data: SendRoomUrlToEmailsRequestDto): void => {
-    dispatch(racingActions.sendRoomUrlToEmails(data));
+    void dispatch(racingActions.sendRoomUrlToEmails(data));
   };
 
   const handleRenderTag: TagRenderer = ({

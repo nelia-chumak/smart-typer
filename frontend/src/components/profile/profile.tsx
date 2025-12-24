@@ -74,7 +74,7 @@ const Profile: FC = () => {
 
   useEffect(() => {
     if (userId) {
-      dispatch(profileActions.loadUser({ userId: Number(userId) }));
+      void dispatch(profileActions.loadUser({ userId: Number(userId) }));
     }
   }, [userId]);
 
@@ -114,15 +114,15 @@ const Profile: FC = () => {
       },
     );
     if (changes.photoUrl && selectedFile) {
-      dispatch(profileActions.updateAvatar(selectedFile));
+      void dispatch(profileActions.updateAvatar(selectedFile));
       setSelectedFile(null);
     }
     if (_.isNull(changes.photoUrl)) {
-      dispatch(profileActions.deleteAvatar());
+      void dispatch(profileActions.deleteAvatar());
     }
     if (changes.email || changes.nickname) {
       const personalInfo = _.omit(changes, UserKey.PHOTO_URL);
-      dispatch(profileActions.updatePersonalInfo(personalInfo));
+      void dispatch(profileActions.updatePersonalInfo(personalInfo));
     }
   };
 

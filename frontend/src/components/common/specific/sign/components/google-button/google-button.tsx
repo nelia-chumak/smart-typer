@@ -17,7 +17,7 @@ const GoogleButton: FC = () => {
   }, [googleUrl]);
 
   const handleGoogleLogIn = (): void => {
-    dispatch(authActions.loadGoogleUrl());
+    void dispatch(authActions.loadGoogleUrl());
   };
 
   return (

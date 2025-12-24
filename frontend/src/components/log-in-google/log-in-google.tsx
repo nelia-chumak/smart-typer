@@ -37,7 +37,7 @@ const LogInGoogle: FC = () => {
   }, [isGoogleRequestLoading]);
 
   const handleGoogle = async (code: string): Promise<void> => {
-    dispatch(authActions.logInGoogle({ code }));
+    void dispatch(authActions.logInGoogle({ code }));
     setIsInitialState(false);
   };
 

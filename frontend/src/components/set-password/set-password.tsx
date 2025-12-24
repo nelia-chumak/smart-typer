@@ -40,7 +40,7 @@ const SetPassword: FC = () => {
 
   const handleSubmitForm = async (data: NewPassword): Promise<void> => {
     const { password } = data;
-    dispatch(authActions.setPassword({ password, token }));
+    void dispatch(authActions.setPassword({ password, token }));
   };
 
   useEffect(() => {

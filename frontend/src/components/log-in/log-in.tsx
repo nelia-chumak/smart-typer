@@ -34,7 +34,7 @@ const LogIn: FC = () => {
   }, [authError, user?.id]);
 
   const handleSubmitForm = (data: LogInRequestDto): void => {
-    dispatch(authActions.logIn(data));
+    void dispatch(authActions.logIn(data));
   };
 
   return (

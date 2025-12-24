@@ -44,7 +44,7 @@ class Racing {
     ): Promise<void> => {
       const { roomApi: roomApiService } = services;
       const room = await roomApiService.get(payload);
-      dispatch(this.setCurrentRoom(room));
+      void dispatch(this.setCurrentRoom(room));
     },
   );
 
@@ -62,7 +62,7 @@ class Racing {
       if (!personalRoom) {
         return;
       }
-      dispatch(
+      void dispatch(
         this.setCurrentRoom({ ...personalRoom, gameTime, countdownBeforeGame }),
       );
     },
@@ -76,8 +76,8 @@ class Racing {
     ): Promise<GameRoom> => {
       const currentRoom = mapRoomToGameRoom(payload);
       const { id: roomId } = payload;
-      dispatch(this.joinRoom({ roomId }));
-      dispatch(this.loadCommentatorText(CommentatorEvent.GREETING));
+      void dispatch(this.joinRoom({ roomId }));
+      void dispatch(this.loadCommentatorText(CommentatorEvent.GREETING));
       return currentRoom;
     },
   );
@@ -138,7 +138,7 @@ class Racing {
     ): Promise<void> => {
       const { roomApi: roomApiService } = services;
       const { id } = await roomApiService.create(payload);
-      dispatch(this.loadShareRoomUrl({ roomId: id }));
+      void dispatch(this.loadShareRoomUrl({ roomId: id }));
     },
   );
 
@@ -233,7 +233,7 @@ class Racing {
       const { roomApi: roomApiService } = services;
       const { lessons: lessonsActions } = actions;
       const { lessonId } = await roomApiService.addLessonId(payload);
-      dispatch(lessonsActions.loadCurrent({ lessonId }));
+      void dispatch(lessonsActions.loadCurrent({ lessonId }));
       return { lessonId };
     },
   );
@@ -247,7 +247,7 @@ class Racing {
       const { roomApi: roomApiService } = services;
       const { lessons: lessonsActions } = actions;
       await roomApiService.removeLessonId(payload);
-      dispatch(lessonsActions.sendLessonResult());
+      void dispatch(lessonsActions.sendLessonResult());
       dispatch(lessonsActions.resetCurrent());
     },
   );
