@@ -1,6 +1,6 @@
 import { SocketEvent, UserKey } from 'common/enums/enums';
 import {
-  Middleware,
+  AppMiddleware,
   ParticipantIdDto,
   RoomDto,
   RoomIdDto,
@@ -14,8 +14,11 @@ type Options = {
   racingActions: typeof racingActions;
 };
 
-const getSocketMiddleware = ({ socketService }: Options): Middleware => {
-  return ({ dispatch, getState }) => {
+const getSocketMiddleware = ({ socketService }: Options): AppMiddleware => {
+  return (api) => {
+    const { dispatch } = api;
+    const getState = api.getState.bind(api);
+
     socketService.on(SocketEvent.CREATE_ROOM, (payload: RoomDto) => {
       dispatch(racingActions.addRoomToAvailableRooms(payload));
     });
@@ -23,7 +26,7 @@ const getSocketMiddleware = ({ socketService }: Options): Middleware => {
     socketService.on(
       SocketEvent.ADD_PARTICIPANT,
       (payload: Omit<UserDto, UserKey.EMAIL>) => {
-        const currentUserId = getState().auth.user.id;
+        const currentUserId = getState().auth.user?.id;
         if (currentUserId !== payload.id) {
           dispatch(racingActions.addParticipant(payload));
         }
@@ -33,7 +36,7 @@ const getSocketMiddleware = ({ socketService }: Options): Middleware => {
     socketService.on(
       SocketEvent.REMOVE_PARTICIPANT,
       (payload: ParticipantIdDto) => {
-        const currentUserId = getState().auth.user.id;
+        const currentUserId = getState().auth.user?.id;
         if (currentUserId !== payload.participantId) {
           dispatch(racingActions.removeParticipant(payload));
         }
@@ -47,7 +50,7 @@ const getSocketMiddleware = ({ socketService }: Options): Middleware => {
     socketService.on(
       SocketEvent.TOGGLE_PARTICIPANT_IS_READY,
       (payload: ParticipantIdDto) => {
-        const currentUserId = getState().auth.user.id;
+        const currentUserId = getState().auth.user?.id;
         if (currentUserId !== payload.participantId) {
           dispatch(racingActions.toggleParticipantIsReady(payload));
         }
@@ -57,7 +60,7 @@ const getSocketMiddleware = ({ socketService }: Options): Middleware => {
     socketService.on(
       SocketEvent.INCREASE_PARTICIPANT_POSITION,
       (payload: ParticipantIdDto) => {
-        const currentUserId = getState().auth.user.id;
+        const currentUserId = getState().auth.user?.id;
         if (currentUserId !== payload.participantId) {
           dispatch(racingActions.increaseParticipantPosition(payload));
         }

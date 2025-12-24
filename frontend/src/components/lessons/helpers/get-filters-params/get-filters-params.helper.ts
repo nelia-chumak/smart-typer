@@ -9,10 +9,10 @@ const getFiltersParams = (
   const params = {} as LessonFilters;
 
   if (contentTypeFilter.value) {
-    params.contentType = contentTypeFilter.value as ContentType;
+    params.contentType = contentTypeFilter.value;
   }
   if (creatorTypeFilter.value) {
-    params.creatorType = creatorTypeFilter.value as CreatorType;
+    params.creatorType = creatorTypeFilter.value;
   }
   return params;
 };

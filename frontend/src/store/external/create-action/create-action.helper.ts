@@ -20,7 +20,13 @@ type CreateAction = {
 const createAction: CreateAction = <T, K>(
   actionType: ActionType,
   func?: CreateActionCallback<T, K>,
-): any => {
+):
+  | PayloadActionCreator<
+      ReturnType<CreateActionCallback<T, K>>['payload'],
+      ActionType,
+      CreateActionCallback<T, K>
+    >
+  | PayloadActionCreator<void, ActionType> => {
   if (func) {
     return reduxCreateAction<CreateActionCallback<T, K>, ActionType>(
       actionType,

@@ -1,5 +1,5 @@
 import { isRejected, isRejectedWithValue } from '@reduxjs/toolkit';
-import { Middleware } from 'common/types/types';
+import { AppMiddleware } from 'common/types/types';
 import { notification as notificationService } from 'services/services';
 
 type Options = {
@@ -8,7 +8,7 @@ type Options = {
 
 const getErrorHandlerMiddleware = ({
   notificationService,
-}: Options): Middleware => {
+}: Options): AppMiddleware => {
   return () => (next) => (action) => {
     if (isRejected(action)) {
       const message = action.error?.message;

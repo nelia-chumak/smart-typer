@@ -56,10 +56,14 @@ const FormField: FC<Props> = ({
   const [isCopied, setIsCopied] = useState(false);
 
   const handleCopy = (): void => {
-    if (value) {
-      navigator.clipboard.writeText(value);
-      setIsCopied(true);
+    if (!value) {
+      return;
     }
+
+    void navigator.clipboard
+      .writeText(value)
+      .then(() => setIsCopied(true))
+      .catch(() => setIsCopied(false));
   };
 
   const renderFormField = (type: FormFieldType): JSX.Element | null => {

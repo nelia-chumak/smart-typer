@@ -1,8 +1,4 @@
-import {
-  ContentWrapperShadow,
-  ContentWrapperSize,
-  HttpErrorMessage,
-} from 'common/enums/enums';
+import { ContentWrapperShadow, ContentWrapperSize } from 'common/enums/enums';
 import { FC, JSX, SyntheticEvent } from 'common/types/types';
 import { ContentWrapper } from 'components/common/common';
 import { RBForm } from 'components/external/external';
@@ -25,7 +21,7 @@ type Props = {
   onSubmit: (e: SyntheticEvent) => void;
   isSubmitDisabled?: boolean;
   alternativeRoute?: AlternativeRouteProp;
-  authError?: HttpErrorMessage | null;
+  authError?: string | null;
 };
 
 const Sign: FC<Props> = ({

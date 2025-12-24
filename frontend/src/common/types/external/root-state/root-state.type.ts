@@ -1,5 +1,7 @@
-import { store } from 'store/store';
+import * as reducers from "store/modules/reducers";
 
-type RootState = ReturnType<typeof store.getState>;
+type ReducersMap = typeof reducers;
 
-export type { RootState };
+export type RootState = {
+  [K in keyof ReducersMap]: ReturnType<ReducersMap[K]>;
+};
