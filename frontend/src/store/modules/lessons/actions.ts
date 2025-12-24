@@ -1,21 +1,7 @@
-import { createAction, createAsyncThunk } from 'store/external/external';
-import { ActionType } from './action-type';
-import {
-  CreateLessonRequestDto,
-  LessonDto,
-  LessonFilters,
-  LessonIdDto,
-  LessonWithSkillsStatistics,
-} from 'common/types/types';
 import {
   DEFAULT_LESSONS_OFFSET,
   LESSONS_AMOUNT_FOR_ONE_REQUEST,
 } from 'common/constants/constants';
-import {
-  IPaginationRequest,
-  IPaginationResponse,
-} from 'common/interface/interface';
-import { mapLessonToLessonWithSkillsStatistics } from 'helpers/helpers';
 import {
   CommonKey,
   CreatorType,
@@ -23,6 +9,20 @@ import {
   LessonKey,
   PaginationKey,
 } from 'common/enums/enums';
+import {
+  IPaginationRequest,
+  IPaginationResponse,
+} from 'common/interfaces/interfaces';
+import {
+  CreateLessonRequestDto,
+  LessonDto,
+  LessonFilters,
+  LessonIdDto,
+  LessonWithSkillsStatistics,
+} from 'common/types/types';
+import { mapLessonToLessonWithSkillsStatistics } from 'helpers/helpers';
+import { createAction, createAsyncThunk } from 'store/external/external';
+import { ActionType } from './action-type';
 
 class Lessons {
   public create = createAsyncThunk(

@@ -1,4 +1,3 @@
 export { type ErrorResponse } from 'smart-typer-shared/common/interfaces/interfaces';
-export * from './http/http';
+export * from './option/option';
 export * from './pagination/pagination';
-export * from './record/record';

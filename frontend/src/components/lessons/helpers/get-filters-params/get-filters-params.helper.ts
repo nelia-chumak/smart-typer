@@ -1,5 +1,5 @@
 import { ContentType, CreatorType } from 'common/enums/enums';
-import { IOption } from 'common/interface/interface';
+import { IOption } from 'common/interfaces/interfaces';
 import { LessonFilters } from 'common/types/types';
 
 const getFiltersParams = (

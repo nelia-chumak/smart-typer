@@ -1,6 +1,7 @@
-import { Request, Response, NextFunction, RequestHandler } from 'express';
-import { HttpCode, HttpErrorMessage } from 'common/enums/enums';
 import { WHITE_LIST_ROUTES } from 'common/constants/constants';
+import { HttpCode, HttpErrorMessage } from 'common/enums/enums';
+import { ErrorResponse } from 'common/interfaces/interfaces';
+import { NextFunction, Request, RequestHandler, Response } from 'express';
 import { token as tokenService } from 'services/services';
 
 type Options = {
@@ -25,9 +26,11 @@ const getAuthMiddleware = (opts: Options): RequestHandler => {
         throw new Error();
       }
     } catch (err) {
-      res
-        .status(HttpCode.UNAUTHORIZED)
-        .json({ msg: HttpErrorMessage.UNAUTHORIZED, error: err });
+      const errorResponse: ErrorResponse = {
+        errorMessage: HttpErrorMessage.UNAUTHORIZED,
+        err,
+      };
+      res.status(HttpCode.UNAUTHORIZED).json(errorResponse);
     }
   };
 };

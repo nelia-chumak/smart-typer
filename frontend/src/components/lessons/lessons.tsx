@@ -8,7 +8,7 @@ import {
   PaginationKey,
   SpinnerSize,
 } from 'common/enums/enums';
-import { IOption, IPaginationRequest } from 'common/interface/interface';
+import { IOption, IPaginationRequest } from 'common/interfaces/interfaces';
 import {
   CreateLessonRequestDto,
   FC,
@@ -16,22 +16,22 @@ import {
   LessonFilters,
 } from 'common/types/types';
 import {
+  ArMarkerModal,
   Button,
   FormField,
-  ArMarkerModal,
   LessonCard,
   Select,
   Spinner,
 } from 'components/common/common';
+import { ReactInfiniteScroll } from 'components/external/external';
 import { useDispatch, useEffect, useSelector, useState } from 'hooks/hooks';
 import { lessons as lessonsActions } from 'store/modules/actions';
 import {
   CONTENT_TYPE_OPTIONS,
   CREATOR_TYPE_OPTIONS,
 } from './common/constants/constants';
-import { getFiltersParams } from './helpers/helpers';
 import { CategoryWrapper, CreateLessonModal } from './components/components';
-import { ReactInfiniteScroll } from 'components/external/external';
+import { getFiltersParams } from './helpers/helpers';
 
 import styles from './styles.module.scss';
 
@@ -144,30 +144,30 @@ const Lessons: FC = () => {
         <div className={styles.lessonCards}>
           {areFiltersSet
             ? lessons.map((lesson) => (
-              <LessonCard
-                key={lesson.id}
-                lesson={lesson}
-                onArMarkerClick={setArMarkerSymbol}
-                onDeleteLesson={handleDeleteLesson}
-              />
-            ))
-            : lessons.map((lesson, i, lessons) => (
-              <CategoryWrapper
-                key={lesson.id}
-                currentLessonCreatorType={lesson.creatorType}
-                prevLessonCreatorType={
-                  i !== FIRST_ARR_ELEM_INDEX
-                    ? lessons[i - 1].creatorType
-                    : undefined
-                }
-              >
                 <LessonCard
+                  key={lesson.id}
                   lesson={lesson}
                   onArMarkerClick={setArMarkerSymbol}
                   onDeleteLesson={handleDeleteLesson}
                 />
-              </CategoryWrapper>
-            ))}
+              ))
+            : lessons.map((lesson, i, lessons) => (
+                <CategoryWrapper
+                  key={lesson.id}
+                  currentLessonCreatorType={lesson.creatorType}
+                  prevLessonCreatorType={
+                    i !== FIRST_ARR_ELEM_INDEX
+                      ? lessons[i - 1].creatorType
+                      : undefined
+                  }
+                >
+                  <LessonCard
+                    lesson={lesson}
+                    onArMarkerClick={setArMarkerSymbol}
+                    onDeleteLesson={handleDeleteLesson}
+                  />
+                </CategoryWrapper>
+              ))}
         </div>
       </ReactInfiniteScroll>
       <CreateLessonModal

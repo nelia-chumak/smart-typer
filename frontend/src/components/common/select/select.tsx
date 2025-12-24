@@ -1,4 +1,4 @@
-import { IOption } from 'common/interface/interface';
+import { IOption } from 'common/interfaces/interfaces';
 import { JSX } from 'common/types/external/external';
 import { ReactSelect } from 'components/external/external';
 

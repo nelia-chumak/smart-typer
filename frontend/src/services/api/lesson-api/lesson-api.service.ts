@@ -1,5 +1,8 @@
 import { HttpMethod, RequestContentType } from 'common/enums/enums';
-import { Http as HttpService } from '../../http/http.service';
+import {
+  IPaginationRequest,
+  IPaginationResponse,
+} from 'common/interfaces/interfaces';
 import {
   CreateLessonRequestDto,
   LessonDto,
@@ -8,10 +11,7 @@ import {
   LessonResponseDto,
   LessonResult,
 } from 'common/types/types';
-import {
-  IPaginationRequest,
-  IPaginationResponse,
-} from 'common/interface/interface';
+import { Http as HttpService } from '../../http/http.service';
 
 type Constructor = {
   httpService: HttpService;

@@ -1,5 +1,5 @@
 import { ContentType } from 'common/enums/enums';
-import { IOption } from 'common/interface/interface';
+import { IOption } from 'common/interfaces/interfaces';
 
 const CONTENT_TYPE_OPTIONS: readonly IOption<ContentType>[] = [
   { value: null, label: 'All' },

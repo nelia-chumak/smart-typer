@@ -1,5 +1,5 @@
 import { CreatorType } from 'common/enums/enums';
-import { IOption } from 'common/interface/interface';
+import { IOption } from 'common/interfaces/interfaces';
 
 const CREATOR_TYPE_OPTIONS: readonly IOption<CreatorType>[] = [
   { value: null, label: 'All' },

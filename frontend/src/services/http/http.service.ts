@@ -1,16 +1,17 @@
-import queryString from 'query-string';
-import EventEmitter from 'eventemitter3';
-import { HttpError } from 'exceptions/exceptions';
 import {
-  RequestContentType,
+  AppRoute,
+  EmitterEvent,
+  HttpCode,
   HttpHeader,
   HttpMethod,
+  RequestContentType,
   StorageKey,
-  HttpCode,
-  EmitterEvent,
-  AppRoute,
 } from 'common/enums/enums';
+import { ErrorResponse } from 'common/interfaces/interfaces';
 import { HttpOptions, TokensResponseDto } from 'common/types/types';
+import EventEmitter from 'eventemitter3';
+import { HttpError } from 'exceptions/exceptions';
+import queryString from 'query-string';
 import {
   localStorage as localStorageService,
   navigation as navigationService,
@@ -82,14 +83,21 @@ class Http {
     });
 
     if (!response.ok) {
-      const error = await response.json();
+      const error: unknown = await response.json();
+      const { errorMessage } =
+        typeof error === 'object' && error !== null
+          ? (error as ErrorResponse)
+          : {};
+      const message =
+        typeof errorMessage === 'string' ? errorMessage : response.statusText;
+
       throw new HttpError({
         status: response.status,
-        message: error.msg || error.error,
+        message,
       });
     }
 
-    if (response.status === HttpCode.NO_CONTENT) {
+    if (response.status === Number(HttpCode.NO_CONTENT)) {
       return null as unknown as T;
     }
 
@@ -102,23 +110,20 @@ class Http {
       return response.blob() as unknown as T;
     }
 
-    return response.json();
+    return response.json() as Promise<T>;
   }
 
   public async _sendRequestAfterGetToken<T = unknown>(
     url: string,
     options: Partial<HttpOptions> = {},
   ): Promise<T> {
-    return new Promise((resolve, reject) => {
-      this._emitter.on(EmitterEvent.GET_ACCESS_TOKEN, async (accessToken) => {
-        try {
-          const data: T = await this._sendRequest(url, options, accessToken);
-          resolve(data);
-        } catch (error) {
-          reject(error);
-        }
+    const accessToken = await new Promise<string>((resolve) => {
+      this._emitter.once(EmitterEvent.GET_ACCESS_TOKEN, (token: string) => {
+        resolve(token);
       });
     });
+
+    return this._sendRequest<T>(url, options, accessToken);
   }
 
   private _refreshTokens = async (

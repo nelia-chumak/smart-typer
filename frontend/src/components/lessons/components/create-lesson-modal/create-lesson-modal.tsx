@@ -10,14 +10,13 @@ import {
   VoidAction,
   VoidCallback,
 } from 'common/types/types';
-import { createLessonSchema } from 'validation-schemas/validation-schemas';
-import { FormField, Select } from 'components/common/common';
-import { Modal } from 'components/common/common';
-import { useForm } from 'hooks/hooks';
+import { FormField, Modal, Select } from 'components/common/common';
 import { CONTENT_TYPE_OPTIONS as CONTENT_TYPE_OPTIONS_WITH_ALL } from 'components/lessons/common/constants/constants';
+import { useForm } from 'hooks/hooks';
+import { createLessonSchema } from 'validation-schemas/validation-schemas';
 
+import { IOption } from 'common/interfaces/interfaces';
 import styles from './styles.module.scss';
-import { IOption } from 'common/interface/interface';
 
 type Props = {
   isVisible: boolean;
