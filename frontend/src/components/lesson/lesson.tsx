@@ -60,7 +60,7 @@ const Lesson: FC = () => {
     void dispatch(lessonsActions.sendLessonResult());
   };
 
-  const handleCloseResultsModal = async (): Promise<void> => {
+  const handleCloseResultsModal = (): void => {
     setIsResultsModalVisible(false);
     navigate(-1);
   };

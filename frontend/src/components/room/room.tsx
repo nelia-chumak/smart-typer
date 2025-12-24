@@ -1,22 +1,22 @@
-import { Button, TypingCanvas, Spinner } from 'components/common/common';
 import { VOICE_URI } from 'common/constants/constants';
 import { CommentatorEvent, SpinnerSize } from 'common/enums/enums';
 import { FC, UserDto } from 'common/types/types';
+import { Button, Spinner, TypingCanvas } from 'components/common/common';
+import { clsx } from 'helpers/helpers';
 import {
-  useParams,
-  useMemo,
   useDispatch,
-  useNavigate,
-  useSelector,
   useEffect,
+  useMemo,
+  useNavigate,
+  useParams,
+  useSelector,
   useState,
 } from 'hooks/hooks';
-import { Participant, ResultsModal } from './components/components';
 import {
-  racing as racingActions,
   lessons as lessonsActions,
+  racing as racingActions,
 } from 'store/modules/actions';
-import { clsx } from 'helpers/helpers';
+import { Participant, ResultsModal } from './components/components';
 import { mapParticipantsToRating } from './helpers/helpers';
 
 import commentatorImage from 'assets/img/commentator.gif';
@@ -58,7 +58,7 @@ const Room: FC = () => {
 
   const [isResultsModalVisible, setIsResultsModalVisible] = useState(false);
 
-  const handleLeaveRoom = async (): Promise<void> => {
+  const handleLeaveRoom = (): void => {
     navigate(-1);
   };
 
@@ -172,9 +172,7 @@ const Room: FC = () => {
   useEffect(() => {
     return (): void => {
       speechSynthesis.cancel();
-      void dispatch(
-        racingActions.leaveRoom({ roomId, participantId: userId }),
-      );
+      void dispatch(racingActions.leaveRoom({ roomId, participantId: userId }));
       dispatch(racingActions.resetAllExceptPersonal());
     };
   }, []);
@@ -209,8 +207,8 @@ const Room: FC = () => {
             participants={participants ?? []}
             currentUserId={userId}
             lessonContent={lesson?.content}
-            gameTime={gameTime!}
-            countdownBeforeGame={countdownBeforeGame!}
+            gameTime={gameTime}
+            countdownBeforeGame={countdownBeforeGame}
             misclicks={misclicks}
             isSoundTurnedOn={isSoundTurnedOn}
             onTypingStart={handleTypingStart}
