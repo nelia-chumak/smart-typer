@@ -24,10 +24,10 @@ const mapLessonResultToSkillLevelsPayload = ({
 
     const startIndexes = [
       ...lesson.content.matchAll(new RegExp(name, 'gi')),
-    ].map((result) => result.index as number);
+    ].map((result) => result.index);
 
     const indexes = startIndexes.reduce((indexes, index) => {
-      const nextIndexes = [...name].map((_, i) => i + (index as number));
+      const nextIndexes = [...name].map((_, i) => i + index);
       return indexes.concat(nextIndexes);
     }, [] as number[]);
 

@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
-import { yup } from 'dependencies/dependencies';
 import { HttpCode } from 'common/enums/enums';
+import { yup } from 'dependencies/dependencies';
 import { ValidationError } from 'exceptions/exceptions';
+import { NextFunction, Request, Response } from 'express';
 
 export const getValidationMiddleware = <
   T extends yup.AnySchema,
@@ -16,7 +16,7 @@ export const getValidationMiddleware = <
   context?: Record<string, unknown>,
 ) => {
   return async (
-    req: Request,
+    req: Request<Record<string, string>, unknown, unknown, unknown>,
     res: Response,
     next: NextFunction,
   ): Promise<void> => {

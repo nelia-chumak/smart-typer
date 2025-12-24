@@ -99,6 +99,7 @@ const room = new Room({
   mailerService: mailer,
   cronService: cron,
   lessonService: lesson,
+  loggerService: logger,
 });
 
 export {

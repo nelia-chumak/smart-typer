@@ -9,7 +9,7 @@ class Logger {
 
   public info = (
     ...args: Parameters<AppLogger['info']>
-  ): ReturnType<AppLogger['info']> | void => {
+  ): ReturnType<AppLogger['info']> => {
     if (!this._logger) {
       return;
     }
@@ -18,7 +18,7 @@ class Logger {
 
   public warn = (
     ...args: Parameters<AppLogger['warn']>
-  ): ReturnType<AppLogger['warn']> | void => {
+  ): ReturnType<AppLogger['warn']> => {
     if (!this._logger) {
       return;
     }
@@ -27,7 +27,7 @@ class Logger {
 
   public error = (
     ...args: Parameters<AppLogger['error']>
-  ): ReturnType<AppLogger['error']> | void => {
+  ): ReturnType<AppLogger['error']> => {
     if (!this._logger) {
       return;
     }

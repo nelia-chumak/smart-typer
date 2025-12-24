@@ -12,20 +12,21 @@ import {
 } from 'common/enums/enums';
 import {
   CreateRoomRequestDto,
+  RequiredLessonIdDto,
   RoomDto,
   SendRoomUrlToEmailsRequestDto,
   ShareRoomUrlDto,
   UserDto,
-  RequiredLessonIdDto,
 } from 'common/types/types';
 import { room as roomRepository } from 'data/repositories/repositories';
 import { HttpError } from 'exceptions/exceptions';
 import {
-  socket as socketService,
-  user as userService,
-  mailer as mailerService,
   cron as cronService,
   lesson as lessonService,
+  logger as loggerService,
+  mailer as mailerService,
+  socket as socketService,
+  user as userService,
 } from 'services/services';
 
 type Constructor = {
@@ -35,6 +36,7 @@ type Constructor = {
   mailerService: typeof mailerService;
   cronService: typeof cronService;
   lessonService: typeof lessonService;
+  loggerService: typeof loggerService;
 };
 
 class Room {
@@ -44,6 +46,7 @@ class Room {
   private _lessonService: typeof lessonService;
   private _mailerService: typeof mailerService;
   private _cronService: typeof cronService;
+  private _loggerService: typeof loggerService;
 
   public constructor(params: Constructor) {
     this._roomRepository = params.roomRepository;
@@ -52,16 +55,22 @@ class Room {
     this._mailerService = params.mailerService;
     this._cronService = params.cronService;
     this._lessonService = params.lessonService;
+    this._loggerService = params.loggerService;
     this._deleteUnused();
   }
 
-  private async _deleteUnused(): Promise<void> {
+  private _deleteUnused(): void {
     this._cronService.scheduleJob({
       rule: CRON_JOB_RULE,
-      callback:
-        this._roomRepository.deleteCreatedBeforeTodayWithoutParticipants.bind(
-          this._roomRepository,
-        ),
+      callback: () => {
+        void this._roomRepository
+          .deleteCreatedBeforeTodayWithoutParticipants()
+          .catch((err: unknown) => {
+            this._loggerService.error?.(
+              err instanceof Error ? err.message : String(err),
+            );
+          });
+      },
     });
   }
 
@@ -251,7 +260,7 @@ class Room {
     const { lessonId } =
       await this._lessonService.getRandomSystemIdWithoutTest();
 
-    return this._roomRepository.updateLessonId(roomId, lessonId as number);
+    return this._roomRepository.updateLessonId(roomId, lessonId);
   }
 
   public async removeLessonId(roomId: RoomDto[CommonKey.ID]): Promise<void> {
