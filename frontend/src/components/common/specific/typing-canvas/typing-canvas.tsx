@@ -190,7 +190,7 @@ const TypingCanvas: FC<Props> = ({
         playClockTick();
       }
       setTimer(
-        timerBeforeTypingValue as number,
+        timerBeforeTypingValue,
         handleDecreaseTimerBeforeTypingValue,
       );
       return;

@@ -198,7 +198,6 @@ const Profile: FC = () => {
               type={FormFieldType.FILE}
               register={{
                 name: UserKey.PHOTO_URL,
-                // @ts-ignore
                 onChange: handleFileSelected,
               }}
               error={errors.photoUrl}
