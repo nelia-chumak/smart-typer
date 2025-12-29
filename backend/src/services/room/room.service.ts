@@ -165,16 +165,15 @@ class Room {
       });
     }
 
-    const { count, id: fetchedRoomId } =
-      (await this._roomRepository.getParticipantsCountById(roomId)) ?? {};
-    const participantsCount = Number(count);
+    const { count: participantsCount, id: fetchedRoomId } =
+      (await this._roomRepository.getByIdWithParticipantsCount(roomId)) ?? {};
 
     if (!fetchedRoomId) {
       throw new HttpError({
         status: HttpCode.NOT_FOUND,
         message: HttpErrorMessage.NO_ROOM_WITH_SUCH_ID,
       });
-    } else if (participantsCount >= MAX_USERS_IN_ROOM) {
+    } else if (participantsCount && participantsCount >= MAX_USERS_IN_ROOM) {
       throw new HttpError({
         status: HttpCode.BAD_REQUEST,
         message: HttpErrorMessage.MAX_COUNT_OF_USERS,
@@ -217,9 +216,8 @@ class Room {
       });
     }
 
-    const { count, id: fetchedRoomId } =
-      (await this._roomRepository.getParticipantsCountById(roomId)) ?? {};
-    const participantsCount = Number(count);
+    const { count: participantsCount, id: fetchedRoomId } =
+      (await this._roomRepository.getByIdWithParticipantsCount(roomId)) ?? {};
 
     if (!fetchedRoomId) {
       throw new HttpError({

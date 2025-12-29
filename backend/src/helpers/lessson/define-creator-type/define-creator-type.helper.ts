@@ -1,9 +1,10 @@
-import { CommonKey, CreatorType } from 'common/enums/enums';
+import { CommonKey, CreatorType, LessonKey } from 'common/enums/enums';
+import { ILessonRecord } from 'common/interfaces/interfaces';
 import { UserDto } from 'common/types/types';
 
 type DefineCreatorType = {
   userId: UserDto[CommonKey.ID];
-  creatorId: UserDto[CommonKey.ID];
+  creatorId: ILessonRecord[LessonKey.CREATOR_ID];
 };
 
 const defineCreatorType = ({

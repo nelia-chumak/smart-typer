@@ -1,16 +1,14 @@
 import {
   DEFAULT_PERSONAL_ROOM_NAME,
   MAX_USERS_IN_ROOM,
-  NO_USERS_IN_ROOM,
 } from 'common/constants/constants';
-import { NO_ROOM_OWNER } from 'common/constants/racing/no-room-owner/no-room-owner.constant';
 import {
   CommonKey,
-  RoomRelationMappings,
   RoomKey,
-  UserToRoomKey,
+  RoomRelationMappings,
   TableName,
   UserKey,
+  UserToRoomKey,
 } from 'common/enums/enums';
 import { IRoomRecord, IUserToRoomRecord } from 'common/interfaces/interfaces';
 import {
@@ -18,6 +16,7 @@ import {
   ParticipantsCount,
   RequiredLessonIdDto,
   RoomDto,
+  Transaction,
 } from 'common/types/types';
 import { Room as RoomModel } from 'data/models/models';
 
@@ -43,11 +42,11 @@ class Room {
     return { id, lessonId, name, participants: [] };
   }
 
-  public async createPersonal(): Promise<
-    Pick<IUserToRoomRecord, UserToRoomKey.PERSONAL_ROOM_ID>
-  > {
+  public async createPersonal(
+    trx?: Transaction,
+  ): Promise<Pick<IUserToRoomRecord, UserToRoomKey.PERSONAL_ROOM_ID>> {
     const { personalRoomId } = await this._RoomModel
-      .query()
+      .query(trx)
       .insert({
         name: DEFAULT_PERSONAL_ROOM_NAME,
         isPrivate: true,
@@ -70,27 +69,24 @@ class Room {
       )
       .findOne(`${TableName.ROOMS}.${CommonKey.ID}`, roomId)
       .withGraphJoined(`[${RoomRelationMappings.PARTICIPANTS}]`)
-      .modifyGraph(RoomRelationMappings.PARTICIPANTS, (builder) =>
-        builder.select(CommonKey.ID, UserKey.NICKNAME, UserKey.PHOTO_URL),
-      )
+      .modifyGraph(RoomRelationMappings.PARTICIPANTS, (builder) => {
+        builder.select(CommonKey.ID, UserKey.NICKNAME, UserKey.PHOTO_URL);
+      })
       .castTo<RoomDto>();
   }
 
-  public async getParticipantsCountById(
+  public async getByIdWithParticipantsCount(
     roomId: RoomDto[CommonKey.ID],
-  ): Promise<ParticipantsCount & Pick<RoomDto, CommonKey.ID>> {
+  ): Promise<(ParticipantsCount & Pick<RoomDto, CommonKey.ID>) | undefined> {
     return this._RoomModel
       .query()
       .select([
         `${TableName.ROOMS}.${CommonKey.ID}`,
-        this._RoomModel
-          .query()
-          .count('*')
-          .innerJoinRelated(RoomRelationMappings.USER_TO_CURRENT_ROOM)
-          .where(`${TableName.ROOMS}.${CommonKey.ID}`, roomId)
-          .as('count'),
+        this._RoomModel.knex().raw('count(*)::int as "count"'),
       ])
+      .leftJoinRelated(RoomRelationMappings.USER_TO_CURRENT_ROOM)
       .where(`${TableName.ROOMS}.${CommonKey.ID}`, roomId)
+      .groupBy(`${TableName.ROOMS}.${CommonKey.ID}`)
       .first()
       .castTo<ParticipantsCount & Pick<RoomDto, CommonKey.ID>>();
   }
@@ -116,17 +112,25 @@ class Room {
         `${TableName.ROOMS}.${RoomKey.LESSON_ID}`,
         `${TableName.ROOMS}.${RoomKey.NAME}`,
       )
-      .where(RoomKey.IS_PRIVATE, false)
-      .andWhere(
-        this._RoomModel.knex().raw(`(
-          select count(*) from ${TableName.USERS_TO_ROOMS}
-          where ${TableName.USERS_TO_ROOMS}.current_room_id =
-          ${TableName.ROOMS}.${CommonKey.ID}) < ${MAX_USERS_IN_ROOM}`),
+      .leftJoin(
+        TableName.USERS_TO_ROOMS,
+        `${TableName.USERS_TO_ROOMS}.${UserToRoomKey.CURRENT_ROOM_ID}`,
+        `${TableName.ROOMS}.${CommonKey.ID}`,
+      )
+      .where(`${TableName.ROOMS}.${RoomKey.IS_PRIVATE}`, false)
+      .groupBy(
+        `${TableName.ROOMS}.${CommonKey.ID}`,
+        `${TableName.ROOMS}.${RoomKey.LESSON_ID}`,
+        `${TableName.ROOMS}.${RoomKey.NAME}`,
+      )
+      .havingRaw(
+        `count(distinct ${TableName.USERS_TO_ROOMS}.${CommonKey.ID}) < ?`,
+        [MAX_USERS_IN_ROOM],
       )
       .withGraphJoined(`[${RoomRelationMappings.PARTICIPANTS}]`)
-      .modifyGraph(RoomRelationMappings.PARTICIPANTS, (builder) =>
-        builder.select(CommonKey.ID, UserKey.NICKNAME, UserKey.PHOTO_URL),
-      )
+      .modifyGraph(RoomRelationMappings.PARTICIPANTS, (builder) => {
+        builder.select(CommonKey.ID, UserKey.NICKNAME, UserKey.PHOTO_URL);
+      })
       .castTo<RoomDto[]>();
   }
 
@@ -145,20 +149,26 @@ class Room {
     await this._RoomModel
       .query()
       .delete()
-      .where(
-        this._RoomModel.knex().raw(`(
-          SELECT count(*)
-          FROM ${TableName.USERS_TO_ROOMS}
-          WHERE ${TableName.USERS_TO_ROOMS}.current_room_id =
-          ${TableName.ROOMS}.${CommonKey.ID}) = ${NO_USERS_IN_ROOM}
-          AND ${TableName.ROOMS}.${CommonKey.CREATED_AT}::date < CURRENT_DATE`),
+      .whereRaw(
+        `${TableName.ROOMS}.${CommonKey.CREATED_AT}::date < CURRENT_DATE`,
       )
-      .andWhere(
-        this._RoomModel.knex().raw(`(
-          SELECT count(*)
-          FROM ${TableName.USERS_TO_ROOMS}
-          WHERE ${TableName.USERS_TO_ROOMS}.personal_room_id =
-          ${TableName.ROOMS}.${CommonKey.ID}) = ${NO_ROOM_OWNER}`),
+      .whereNotExists(
+        this._RoomModel
+          .knex()
+          .select(1)
+          .from(TableName.USERS_TO_ROOMS)
+          .whereRaw(
+            `${TableName.USERS_TO_ROOMS}.${UserToRoomKey.CURRENT_ROOM_ID} = ${TableName.ROOMS}.${CommonKey.ID}`,
+          ),
+      )
+      .whereNotExists(
+        this._RoomModel
+          .knex()
+          .select(1)
+          .from(TableName.USERS_TO_ROOMS)
+          .whereRaw(
+            `${TableName.USERS_TO_ROOMS}.${UserToRoomKey.PERSONAL_ROOM_ID} = ${TableName.ROOMS}.${CommonKey.ID}`,
+          ),
       );
   }
 

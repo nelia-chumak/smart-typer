@@ -6,7 +6,7 @@ import {
   CommonKey,
   CreatorType,
   FinishedLessonKey,
-  LessonKey,
+  LessonViewKey,
   PaginationKey,
 } from 'common/enums/enums';
 import {
@@ -63,7 +63,7 @@ class Lessons {
       payload: CreateLessonRequestDto &
         Pick<
           LessonDto,
-          CommonKey.ID | FinishedLessonKey.BEST_SKILL | LessonKey.CREATOR_TYPE
+          CommonKey.ID | FinishedLessonKey.BEST_SKILL | LessonViewKey.CREATOR_TYPE
         >,
     ) => ({
       payload,

@@ -19,21 +19,23 @@ import {
   Rating,
   RecordWithoutCommonDateKeys,
   RecordWithoutCommonKeys,
-  UserAuthInfoResponseDto,
-  UserProfileInfoResponseDto,
+  RoomDto,
+  SettingsDto,
   Skill,
   TokensResponseDto,
+  UserAuthInfoResponseDto,
   UserDto,
-  UserWithPassword,
+  UserProfileInfoResponseDto,
   UserToRoom,
-  RoomDto,
+  UserWithPassword,
 } from 'common/types/types';
 import { User as UserModel } from 'data/models/models';
 import {
-  skill as skillRepository,
-  room as roomRepository,
   lesson as lessonRepository,
+  room as roomRepository,
+  skill as skillRepository,
 } from 'data/repositories/repositories';
+import { transaction } from 'dependencies/dependencies';
 
 type Constructor = {
   UserModel: typeof UserModel;
@@ -65,52 +67,54 @@ class User {
   public async create(
     data: RecordWithoutCommonKeys<IUserRecord>,
   ): Promise<RecordWithoutCommonDateKeys<IUserRecord>> {
-    const user = await this._UserModel
-      .query()
-      .insert({
-        ...data,
-        [UserKey.EMAIL]: data.email.toLowerCase(),
-      })
-      .returning([
-        CommonKey.ID,
-        UserKey.EMAIL,
-        UserKey.NICKNAME,
-        UserKey.PASSWORD,
-        UserKey.PHOTO_URL,
-      ]);
+    return await transaction(this._UserModel.knex(), async (trx) => {
+      const user = await this._UserModel
+        .query(trx)
+        .insert({
+          ...data,
+          [UserKey.EMAIL]: data.email.toLowerCase(),
+        })
+        .returning([
+          CommonKey.ID,
+          UserKey.EMAIL,
+          UserKey.NICKNAME,
+          UserKey.PASSWORD,
+          UserKey.PHOTO_URL,
+        ]);
 
-    await this._UserModel
-      .relatedQuery(UserRelationMappings.USER_TO_SKILLS)
-      .for(user.id)
-      .insert(await this._skillRepository.getAllIds());
+      await this._UserModel
+        .relatedQuery(UserRelationMappings.USER_TO_SKILLS, trx)
+        .for(user.id)
+        .insert(await this._skillRepository.getAllIds(trx));
 
-    await this._UserModel
-      .relatedQuery(UserRelationMappings.SETTINGS)
-      .for(user.id)
-      .insert({});
+      await this._UserModel
+        .relatedQuery(UserRelationMappings.SETTINGS, trx)
+        .for(user.id)
+        .insert({});
 
-    await this._UserModel
-      .relatedQuery(UserRelationMappings.STATISTICS)
-      .for(user.id)
-      .insert({});
+      await this._UserModel
+        .relatedQuery(UserRelationMappings.STATISTICS, trx)
+        .for(user.id)
+        .insert({});
 
-    await this._UserModel
-      .relatedQuery(UserRelationMappings.USER_TO_ROOMS)
-      .for(user.id)
-      .insert(await this._roomRepository.createPersonal());
+      await this._UserModel
+        .relatedQuery(UserRelationMappings.USER_TO_ROOMS, trx)
+        .for(user.id)
+        .insert(await this._roomRepository.createPersonal(trx));
 
-    const testIds = await this._lessonRepository.getTestIds();
-    const testLessonsData = testIds.map(({ lessonId }) => ({
-      lessonId,
-      priority: TEST_LESSON_PRIORITY,
-    }));
+      const testIds = await this._lessonRepository.getTestIds(trx);
+      const testLessonsData = testIds.map(({ lessonId }) => ({
+        lessonId,
+        priority: TEST_LESSON_PRIORITY,
+      }));
 
-    await this._UserModel
-      .relatedQuery(UserRelationMappings.USER_TO_STUDY_PLAN)
-      .for(user.id)
-      .insert(testLessonsData);
+      await this._UserModel
+        .relatedQuery(UserRelationMappings.USER_TO_STUDY_PLAN, trx)
+        .for(user.id)
+        .insert(testLessonsData);
 
-    return user;
+      return user;
+    });
   }
 
   public async getByEmail(
@@ -133,42 +137,51 @@ class User {
   ): Promise<
     Omit<UserAuthInfoResponseDto, keyof TokensResponseDto> | undefined
   > {
-    const { userToRooms, ...user } =
-      (await this._UserModel
-        .query()
-        .select(...User.DEFAULT_USER_COLUMNS_TO_RETURN)
-        .findOne({
-          [`${TableName.USERS}.${UserKey.EMAIL}`]: email.toLowerCase(),
-        })
-        .withGraphJoined(
-          `[${UserRelationMappings.SETTINGS}, ${UserRelationMappings.USER_TO_ROOMS}.[${UserToRoomRelationMappings.PERSONAL_ROOM}.[${RoomRelationMappings.PARTICIPANTS}]]]`,
-        )
-        .modifyGraph(UserRelationMappings.SETTINGS, (builder) =>
-          builder.select(
-            SettingsKey.COUNTDOWN_BEFORE_GAME,
-            SettingsKey.GAME_TIME,
-            SettingsKey.HAS_EMAIL_NOTIFICATIONS,
-            SettingsKey.IS_SHOWN_IN_RATING,
-            SettingsKey.IS_SOUND_TURNED_ON,
-          ),
-        )
-        .modifyGraph(
-          `${UserRelationMappings.USER_TO_ROOMS}.[${UserToRoomRelationMappings.PERSONAL_ROOM}]`,
-          (builder) =>
-            builder.select(CommonKey.ID, RoomKey.LESSON_ID, RoomKey.NAME),
-        )
-        .modifyGraph(
-          `${UserRelationMappings.USER_TO_ROOMS}.[${UserToRoomRelationMappings.PERSONAL_ROOM}.[${RoomRelationMappings.PARTICIPANTS}]]`,
-          (builder) =>
-            builder.select(CommonKey.ID, UserKey.NICKNAME, UserKey.PHOTO_URL),
-        )
-        .castTo<any>()) ?? {};
+    const queryResult = await this._UserModel
+      .query()
+      .select(...User.DEFAULT_USER_COLUMNS_TO_RETURN)
+      .findOne({
+        [`${TableName.USERS}.${UserKey.EMAIL}`]: email.toLowerCase(),
+      })
+      .withGraphJoined(
+        `[${UserRelationMappings.SETTINGS}, ${UserRelationMappings.USER_TO_ROOMS}.[${UserToRoomRelationMappings.PERSONAL_ROOM}.[${RoomRelationMappings.PARTICIPANTS}]]]`,
+      )
+      .modifyGraph(UserRelationMappings.SETTINGS, (builder) => {
+        builder.select(
+          SettingsKey.COUNTDOWN_BEFORE_GAME,
+          SettingsKey.GAME_TIME,
+          SettingsKey.HAS_EMAIL_NOTIFICATIONS,
+          SettingsKey.IS_SHOWN_IN_RATING,
+          SettingsKey.IS_SOUND_TURNED_ON,
+        );
+      })
+      .modifyGraph(
+        `${UserRelationMappings.USER_TO_ROOMS}.[${UserToRoomRelationMappings.PERSONAL_ROOM}]`,
+        (builder) => {
+          builder.select(CommonKey.ID, RoomKey.LESSON_ID, RoomKey.NAME);
+        },
+      )
+      .modifyGraph(
+        `${UserRelationMappings.USER_TO_ROOMS}.[${UserToRoomRelationMappings.PERSONAL_ROOM}.[${RoomRelationMappings.PARTICIPANTS}]]`,
+        (builder) => {
+          builder.select(CommonKey.ID, UserKey.NICKNAME, UserKey.PHOTO_URL);
+        },
+      )
+      .castTo<
+        UserDto & {
+          settings: SettingsDto;
+          userToRooms: { personalRoom: RoomDto };
+        }
+      >();
 
-    if (!userToRooms) {
+    if (!queryResult?.userToRooms) {
       return;
     }
+
+    const { userToRooms, ...rest } = queryResult;
+
     return {
-      ...user,
+      ...rest,
       personalRoom: userToRooms.personalRoom,
     };
   }
@@ -178,40 +191,45 @@ class User {
   ): Promise<
     Omit<UserAuthInfoResponseDto, keyof TokensResponseDto> | undefined
   > {
-    const { userToRooms, ...user } =
-      (await this._UserModel
-        .query()
-        .select(...User.DEFAULT_USER_COLUMNS_TO_RETURN)
-        .findById(userId)
-        .withGraphJoined(
-          `[${UserRelationMappings.SETTINGS}, ${UserRelationMappings.USER_TO_ROOMS}.[${UserToRoomRelationMappings.PERSONAL_ROOM}.[${RoomRelationMappings.PARTICIPANTS}]]]`,
-        )
-        .modifyGraph(UserRelationMappings.SETTINGS, (builder) =>
-          builder.select(
-            SettingsKey.COUNTDOWN_BEFORE_GAME,
-            SettingsKey.GAME_TIME,
-            SettingsKey.HAS_EMAIL_NOTIFICATIONS,
-            SettingsKey.IS_SHOWN_IN_RATING,
-            SettingsKey.IS_SOUND_TURNED_ON,
-          ),
-        )
-        .modifyGraph(
-          `${UserRelationMappings.USER_TO_ROOMS}.[${UserToRoomRelationMappings.PERSONAL_ROOM}]`,
-          (builder) =>
-            builder.select(CommonKey.ID, RoomKey.LESSON_ID, RoomKey.NAME),
-        )
-        .modifyGraph(
-          `${UserRelationMappings.USER_TO_ROOMS}.[${UserToRoomRelationMappings.PERSONAL_ROOM}.[${RoomRelationMappings.PARTICIPANTS}]]`,
-          (builder) =>
-            builder.select(CommonKey.ID, UserKey.NICKNAME, UserKey.PHOTO_URL),
-        )
-        .castTo<any>()) ?? {};
+    const queryResult = await this._UserModel
+      .query()
+      .select(...User.DEFAULT_USER_COLUMNS_TO_RETURN)
+      .findById(userId)
+      .withGraphJoined(
+        `[${UserRelationMappings.SETTINGS}, ${UserRelationMappings.USER_TO_ROOMS}.[${UserToRoomRelationMappings.PERSONAL_ROOM}.[${RoomRelationMappings.PARTICIPANTS}]]]`,
+      )
+      .modifyGraph(UserRelationMappings.SETTINGS, (builder) => {
+        builder.select(
+          SettingsKey.COUNTDOWN_BEFORE_GAME,
+          SettingsKey.GAME_TIME,
+          SettingsKey.HAS_EMAIL_NOTIFICATIONS,
+          SettingsKey.IS_SHOWN_IN_RATING,
+          SettingsKey.IS_SOUND_TURNED_ON,
+        );
+      })
+      .modifyGraph(
+        `${UserRelationMappings.USER_TO_ROOMS}.[${UserToRoomRelationMappings.PERSONAL_ROOM}]`,
+        (builder) => {
+          builder.select(CommonKey.ID, RoomKey.LESSON_ID, RoomKey.NAME);
+        },
+      )
+      .modifyGraph(
+        `${UserRelationMappings.USER_TO_ROOMS}.[${UserToRoomRelationMappings.PERSONAL_ROOM}.[${RoomRelationMappings.PARTICIPANTS}]]`,
+        (builder) => {
+          builder.select(CommonKey.ID, UserKey.NICKNAME, UserKey.PHOTO_URL);
+        },
+      )
+      .castTo<
+        UserDto & {
+          settings: SettingsDto;
+          userToRooms: { personalRoom: RoomDto };
+        }
+      >();
 
-    if (!userToRooms) {
-      return;
-    }
+    const { userToRooms, ...rest } = queryResult;
+
     return {
-      ...user,
+      ...rest,
       personalRoom: userToRooms.personalRoom,
     };
   }
@@ -254,7 +272,7 @@ class User {
       .select(...User.DEFAULT_USER_COLUMNS_TO_RETURN)
       .findById(userId)
       .withGraphJoined(`[${UserRelationMappings.STATISTICS}]`)
-      .modifyGraph(UserRelationMappings.STATISTICS, (builder) =>
+      .modifyGraph(UserRelationMappings.STATISTICS, (builder) => {
         builder.select(
           StatisticsKey.AVERAGE_SPEED,
           StatisticsKey.TODAY_AVERAGE_SPEED,
@@ -264,13 +282,13 @@ class User {
           StatisticsKey.TOP_SPEED,
           StatisticsKey.TOTAL_LESSONS,
           StatisticsKey.TOTAL_TIME,
-        ),
-      )
+        );
+      })
       .castTo<Omit<UserProfileInfoResponseDto, ProfileInfoKey.RATING>>();
   }
 
   public async getRating(userId: UserDto[CommonKey.ID]): Promise<Rating> {
-    const rating = await this._UserModel
+    return this._UserModel
       .query()
       .select(
         `${TableName.USERS}.${CommonKey.ID}`,
@@ -279,21 +297,13 @@ class User {
         `${TableName.STATISTICS}.${StatisticsKey.AVERAGE_SPEED}`,
       )
       .leftJoinRelated(UserRelationMappings.STATISTICS)
-      .withGraphJoined(`[${UserRelationMappings.SETTINGS}]`, {
-        joinOperation: 'innerJoin',
-      })
-      .modifyGraph(UserRelationMappings.SETTINGS, (builder) =>
+      .innerJoinRelated(UserRelationMappings.SETTINGS)
+      .where((builder) => {
         builder
           .where(SettingsKey.IS_SHOWN_IN_RATING, true)
-          .orWhere({ [SettingsKey.USER_ID]: userId }),
-      )
-      .castTo<any[]>();
-
-    const mappedRating = rating.map(({ settings, ...user }) => ({
-      ...user,
-    }));
-
-    return mappedRating;
+          .orWhere({ [SettingsKey.USER_ID]: userId });
+      })
+      .castTo<Rating>();
   }
 
   public async updateCurrentRoomByUserId(

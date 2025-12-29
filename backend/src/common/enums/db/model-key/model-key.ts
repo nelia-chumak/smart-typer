@@ -7,8 +7,6 @@ export {
   SkillKey,
   StatisticsKey,
   UserKey,
-  GameRoomKey,
-  ProfileInfoKey,
 } from 'smart-typer-shared/common/enums/enums';
 export * from './lesson-to-skill-key/lesson-to-skill-key.enum';
 export * from './user-to-finished-lesson-key/user-to-finished-lesson-key.enum';

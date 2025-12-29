@@ -5,10 +5,12 @@ import {
 import {
   CommonKey,
   CreatorType,
+  FinishedLessonKey,
   LessonKey,
   LessonRelationMappings,
   LessonToSkillKey,
   LessonToSkillRelationMapping,
+  LessonViewKey,
   RecordsSortOrder,
   RoomKey,
   SkillKey,
@@ -33,21 +35,30 @@ import {
   LessonWithSkills,
   LessonWithSkillsAndContentType,
   RequiredLessonIdDto,
+  Skill,
   Statistics,
+  Transaction,
   UserDto,
 } from 'common/types/types';
-import { Lesson as LessonModel } from 'data/models/models';
+import {
+  Lesson as LessonModel,
+  UserToFinishedLesson as UserToFinishedLessonModel,
+} from 'data/models/models';
+import { transaction } from 'dependencies/dependencies';
 import { defineCreatorType } from 'helpers/helpers';
 
 type Constructor = {
   LessonModel: typeof LessonModel;
+  UserToFinishedLessonModel: typeof UserToFinishedLessonModel;
 };
 
 class Lesson {
   private _LessonModel: typeof LessonModel;
+  private _UserToFinishedLessonModel: typeof UserToFinishedLessonModel;
 
   public constructor(params: Constructor) {
     this._LessonModel = params.LessonModel;
+    this._UserToFinishedLessonModel = params.UserToFinishedLessonModel;
   }
 
   private static DEFAULT_LESSON_COLUMNS_TO_RETURN: string[] = [
@@ -62,8 +73,7 @@ class Lesson {
     return this._LessonModel
       .query()
       .select(...Lesson.DEFAULT_LESSON_COLUMNS_TO_RETURN)
-      .findOne({ [CommonKey.ID]: lessonId })
-      .execute();
+      .findOne({ [CommonKey.ID]: lessonId });
   }
 
   public async getFinishedByIdAndUserId(
@@ -95,35 +105,43 @@ class Lesson {
   public async getByIdWithSkills(
     lessonId: LessonDto[CommonKey.ID],
   ): Promise<LessonWithSkills | undefined> {
-    const { lessonToSkills, ...lesson } =
-      (await this._LessonModel
-        .query()
-        .select(...Lesson.DEFAULT_LESSON_COLUMNS_TO_RETURN)
-        .findOne({ [`${TableName.LESSONS}.${CommonKey.ID}`]: lessonId })
-        .withGraphJoined(
-          `[${LessonRelationMappings.LESSON_TO_SKILLS}.[${LessonToSkillRelationMapping.SKILL}]]`,
-        )
-        .modifyGraph(LessonRelationMappings.LESSON_TO_SKILLS, (builder) =>
-          builder.select(LessonToSkillKey.COUNT),
-        )
-        .modifyGraph(
-          `${LessonRelationMappings.LESSON_TO_SKILLS}.[${LessonToSkillRelationMapping.SKILL}]`,
-          (builder) => builder.select(CommonKey.ID, SkillKey.NAME),
-        )
-        .castTo<any>()) ?? {};
+    const queryResult = await this._LessonModel
+      .query()
+      .select(...Lesson.DEFAULT_LESSON_COLUMNS_TO_RETURN)
+      .findOne({ [`${TableName.LESSONS}.${CommonKey.ID}`]: lessonId })
+      .withGraphJoined(
+        `[${LessonRelationMappings.LESSON_TO_SKILLS}.[${LessonToSkillRelationMapping.SKILL}]]`,
+      )
+      .modifyGraph(LessonRelationMappings.LESSON_TO_SKILLS, (builder) => {
+        builder.select(LessonToSkillKey.COUNT);
+      })
+      .modifyGraph(
+        `${LessonRelationMappings.LESSON_TO_SKILLS}.[${LessonToSkillRelationMapping.SKILL}]`,
+        (builder) => {
+          builder.select(CommonKey.ID, SkillKey.NAME);
+        },
+      )
+      .castTo<
+        LessonResponseDto & {
+          lessonToSkills: Array<{
+            count: number;
+            skill: Pick<Skill, CommonKey.ID | SkillKey.NAME>;
+          }>;
+        }
+      >();
 
-    if (!lessonToSkills) {
+    if (!queryResult?.lessonToSkills) {
       return;
     }
 
-    const mappedSkills = lessonToSkills.map(({ count, skill }: any) => ({
-      count,
-      ...skill,
-    }));
+    const { lessonToSkills, ...rest } = queryResult;
 
     return {
-      ...lesson,
-      skills: mappedSkills,
+      ...rest,
+      skills: lessonToSkills.map(({ count, skill }) => ({
+        count,
+        ...skill,
+      })),
     };
   }
 
@@ -131,35 +149,38 @@ class Lesson {
     userId: UserDto[CommonKey.ID],
     data: CreateLessonRequestDto,
   ): Promise<LessonResponseDto> {
-    const { id, name, content } = await this._LessonModel
-      .query()
-      .insert({
-        ...data,
-        creatorId: userId,
-      })
-      .returning(Lesson.DEFAULT_LESSON_COLUMNS_TO_RETURN);
+    return await transaction(this._LessonModel.knex(), async (trx) => {
+      const { id, name, content } = await this._LessonModel
+        .query(trx)
+        .insert({
+          ...data,
+          creatorId: userId,
+        })
+        .returning(Lesson.DEFAULT_LESSON_COLUMNS_TO_RETURN);
 
-    const lesson = {
-      id,
-      name,
-      content,
-    };
+      const lesson = {
+        id,
+        name,
+        content,
+      };
 
-    const contentReplaced = data.content.replace(/'/g, '"');
+      await trx(TableName.LESSONS_TO_SKILLS).insert(
+        trx
+          .select(
+            trx.raw('? as lesson_id', [lesson.id]),
+            trx.ref(`${TableName.SKILLS}.${CommonKey.ID}`).as('skill_id'),
+            trx.raw('count(*)::int as count'),
+          )
+          .from(TableName.SKILLS)
+          .joinRaw(
+            `CROSS JOIN LATERAL regexp_matches(?, ${TableName.SKILLS}.${SkillKey.NAME}, 'gi') as matches`,
+            [content],
+          )
+          .groupBy(`${TableName.SKILLS}.${CommonKey.ID}`),
+      );
 
-    await this._LessonModel.knex().raw(`
-      WITH skill_count AS (
-        SELECT ${lesson.id} AS lesson_id, skills.id AS skill_id, COUNT(matches)
-        FROM skills,
-        LATERAL regexp_matches('${contentReplaced}', skills.name, 'gi') AS matches
-        GROUP BY skills.id
-      )
-      INSERT INTO lessons_to_skills (lesson_id, skill_id, count)
-      SELECT * FROM skill_count
-      WHERE count > 0;
-    `);
-
-    return lesson;
+      return lesson;
+    });
   }
 
   public async getPaginated(
@@ -167,85 +188,82 @@ class Lesson {
     data: IPaginationRequest & LessonFilters,
   ): Promise<IPaginationResponse<LessonDto>> {
     const { offset, limit, contentType, creatorType } = data;
-    const lessons = await this._LessonModel
+
+    const baseQuery = this._LessonModel.query().modify((builder) => {
+      if (contentType) {
+        builder.where({ contentType });
+      }
+
+      if (creatorType === CreatorType.SYSTEM) {
+        builder.whereNull(LessonKey.CREATOR_ID);
+      } else if (creatorType === CreatorType.OTHER_USERS) {
+        builder.whereNot({ [LessonKey.CREATOR_ID]: userId });
+      } else if (creatorType === CreatorType.CURRENT_USER) {
+        builder.where({ [LessonKey.CREATOR_ID]: userId });
+      }
+    });
+
+    const bestSkillQuery = this._UserToFinishedLessonModel
       .query()
+      .select(`${TableName.SKILLS}.${SkillKey.NAME}`)
+      .joinRelated(UserToFinishedLessonRelationMapping.SKILL)
+      .where(
+        `${TableName.USERS_TO_FINISHED_LESSONS}.${UserToFinishedLessonKey.USER_ID}`,
+        userId,
+      )
+      .where(
+        `${TableName.USERS_TO_FINISHED_LESSONS}.${UserToFinishedLessonKey.LESSON_ID}`,
+        this._LessonModel.knex().ref(`${TableName.LESSONS}.${CommonKey.ID}`),
+      )
+      .orderBy(
+        `${TableName.USERS_TO_FINISHED_LESSONS}.${CommonKey.CREATED_AT}`,
+        RecordsSortOrder.DESC,
+      )
+      .limit(1)
+      .as('bestSkill');
+
+    const lessonsQueryResult = await baseQuery
+      .clone()
       .select(
         ...Lesson.DEFAULT_LESSON_COLUMNS_TO_RETURN,
         LessonKey.CREATOR_ID,
         LessonKey.CONTENT_TYPE,
+        bestSkillQuery,
       )
-      .where((builder) => {
-        if (contentType) {
-          builder.where({ contentType });
-        }
-      })
-      .andWhere((builder) => {
-        if (creatorType === CreatorType.SYSTEM) {
-          builder.whereNull(LessonKey.CREATOR_ID);
-        } else if (creatorType === CreatorType.OTHER_USERS) {
-          builder.whereNot({ [LessonKey.CREATOR_ID]: userId });
-        } else if (creatorType === CreatorType.CURRENT_USER) {
-          builder.where({ [LessonKey.CREATOR_ID]: userId });
-        }
-      })
-      .withGraphJoined(
-        `[${LessonRelationMappings.FINISHED_LESSON}.[${UserToFinishedLessonRelationMapping.SKILL}]]`,
-      )
-      .modifyGraph(LessonRelationMappings.FINISHED_LESSON, (builder) =>
-        builder.findOne({ userId }),
-      )
-      .modifyGraph(
-        `${LessonRelationMappings.FINISHED_LESSON}.[${UserToFinishedLessonRelationMapping.SKILL}]`,
-        (builder) => builder.select(SkillKey.NAME),
-      )
-      .orderByRaw(`CASE WHEN creator_id = ${userId} THEN 0 ELSE 1 END`)
+      .orderByRaw(`CASE WHEN ${LessonKey.CREATOR_ID} = ? THEN 0 ELSE 1 END`, [
+        userId,
+      ])
       .orderBy(
         `${TableName.LESSONS}.${CommonKey.CREATED_AT}`,
         RecordsSortOrder.ASC,
       )
       .offset(offset)
       .limit(limit)
-      .castTo<any[]>();
+      .castTo<
+        (Omit<LessonDto, LessonViewKey.CREATOR_TYPE> & {
+          creatorId: ILessonRecord[LessonKey.CREATOR_ID];
+        })[]
+      >();
 
-    const mappedLessons = lessons.map(
-      ({ creatorId, finishedLesson, ...lesson }) => {
-        return {
-          ...lesson,
-          creatorType: defineCreatorType({ userId, creatorId }),
-          bestSkill: finishedLesson?.pop()?.skill?.name ?? null,
-        };
-      },
+    const mappedLessons = lessonsQueryResult.map(
+      ({ creatorId, ...lesson }) => ({
+        ...lesson,
+        creatorType: defineCreatorType({ userId, creatorId }),
+      }),
     );
 
-    const count = await this._LessonModel
-      .query()
-      .where((builder) => {
-        if (contentType) {
-          builder.where({ contentType });
-        }
-      })
-      .andWhere((builder) => {
-        if (creatorType === CreatorType.SYSTEM) {
-          builder.whereNull(LessonKey.CREATOR_ID);
-        } else if (creatorType === CreatorType.OTHER_USERS) {
-          builder.whereNot({ [LessonKey.CREATOR_ID]: userId });
-        } else if (creatorType === CreatorType.CURRENT_USER) {
-          builder.where({ [LessonKey.CREATOR_ID]: userId });
-        }
-      })
-      .resultSize();
+    const countQueryResult = await baseQuery.clone().resultSize();
 
-    return {
-      data: mappedLessons,
-      count,
-    };
+    return { data: mappedLessons, count: countQueryResult };
   }
 
-  public getTestIds(): Promise<
+  public getTestIds(
+    trx?: Transaction,
+  ): Promise<
     Pick<IUserToStudyPlanLessonRecord, UserToStudyPlanLessonKey.LESSON_ID>[]
   > {
     return this._LessonModel
-      .query()
+      .query(trx)
       .select(`${CommonKey.ID} as ${UserToStudyPlanLessonKey.LESSON_ID}`)
       .whereIn(LessonKey.NAME, TEST_LESSON_NAMES)
       .castTo<
@@ -258,38 +276,43 @@ class Lesson {
     userId: UserDto[CommonKey.ID],
     areTestLessons = false,
   ): Promise<LessonDto[]> {
-    const lessons = await this._LessonModel
+    const bestSkillQuery = this._UserToFinishedLessonModel
+      .query()
+      .select(`${TableName.SKILLS}.${SkillKey.NAME}`)
+      .joinRelated(UserToFinishedLessonRelationMapping.SKILL)
+      .where(
+        `${TableName.USERS_TO_FINISHED_LESSONS}.${UserToFinishedLessonKey.USER_ID}`,
+        userId,
+      )
+      .where(
+        `${TableName.USERS_TO_FINISHED_LESSONS}.${UserToFinishedLessonKey.LESSON_ID}`,
+        this._LessonModel.knex().ref(`${TableName.LESSONS}.${CommonKey.ID}`),
+      )
+      .orderBy(
+        `${TableName.USERS_TO_FINISHED_LESSONS}.${CommonKey.CREATED_AT}`,
+        RecordsSortOrder.DESC,
+      )
+      .limit(1)
+      .as('bestSkill');
+
+    const queryResult = await this._LessonModel
       .query()
       .select(
         ...Lesson.DEFAULT_LESSON_COLUMNS_TO_RETURN,
         `${TableName.LESSONS}.${LessonKey.CONTENT_TYPE}`,
         `${TableName.LESSONS}.${LessonKey.CREATOR_ID}`,
+        bestSkillQuery,
       )
       .joinRelated(LessonRelationMappings.STUDY_PLAN)
-      .where((builder) => {
-        if (areTestLessons) {
-          builder.whereIn(
-            `${TableName.LESSONS}.${LessonKey.NAME}`,
-            TEST_LESSON_NAMES,
-          );
-        } else {
-          builder.whereNotIn(
-            `${TableName.LESSONS}.${LessonKey.NAME}`,
-            TEST_LESSON_NAMES,
-          );
-        }
-      })
+      .where(
+        `${TableName.LESSONS}.${LessonKey.NAME}`,
+        areTestLessons ? 'in' : 'not in',
+        TEST_LESSON_NAMES,
+      )
       .andWhere({
         [`${LessonRelationMappings.STUDY_PLAN}.${UserToStudyPlanLessonKey.USER_ID}`]:
           userId,
       })
-      .withGraphJoined(
-        `[ ${LessonRelationMappings.FINISHED_LESSON}.[${UserToFinishedLessonRelationMapping.SKILL}]]`,
-      )
-      .modifyGraph(
-        `${LessonRelationMappings.FINISHED_LESSON}.[${UserToFinishedLessonRelationMapping.SKILL}]`,
-        (builder) => builder.select(SkillKey.NAME),
-      )
       .orderBy(
         `${LessonRelationMappings.STUDY_PLAN}.${UserToStudyPlanLessonKey.PRIORITY}`,
         RecordsSortOrder.ASC,
@@ -298,17 +321,18 @@ class Lesson {
         `${LessonRelationMappings.STUDY_PLAN}.${UserToStudyPlanLessonKey.LESSON_ID}`,
         RecordsSortOrder.ASC,
       )
-      .castTo<any[]>();
+      .castTo<
+        (Omit<LessonDto, LessonViewKey.CREATOR_TYPE> & {
+          creatorId: ILessonRecord[LessonKey.CREATOR_ID];
+        })[]
+      >();
 
-    const mappedLessons = lessons.map(
-      ({ studyPlan: _studyPlan, creatorId, finishedLesson, ...lesson }) => {
-        return {
-          ...lesson,
-          creatorType: defineCreatorType({ userId, creatorId }),
-          bestSkill: finishedLesson?.pop()?.skill?.name ?? null,
-        };
-      },
-    );
+    const mappedLessons = queryResult.map(({ creatorId, ...lesson }) => {
+      return {
+        ...lesson,
+        creatorType: defineCreatorType({ userId, creatorId }),
+      };
+    });
 
     return mappedLessons;
   }
@@ -442,16 +466,30 @@ class Lesson {
       .withGraphJoined(
         `[${LessonRelationMappings.LESSON_TO_SKILLS}.[${LessonToSkillRelationMapping.SKILL}]]`,
       )
-      .modifyGraph(LessonRelationMappings.LESSON_TO_SKILLS, (builder) =>
-        builder.select(LessonToSkillKey.COUNT),
-      )
+      .modifyGraph(LessonRelationMappings.LESSON_TO_SKILLS, (builder) => {
+        builder.select(LessonToSkillKey.COUNT);
+      })
       .modifyGraph(
         `${LessonRelationMappings.LESSON_TO_SKILLS}.[${LessonToSkillRelationMapping.SKILL}]`,
-        (builder) => builder.select(CommonKey.ID, SkillKey.NAME),
-      );
+        (builder) => {
+          builder.select(CommonKey.ID, SkillKey.NAME);
+        },
+      )
+      .castTo<
+        (Omit<
+          LessonDto,
+          LessonViewKey.CREATOR_TYPE | FinishedLessonKey.BEST_SKILL
+        > & {
+          contentType: LessonDto[LessonKey.CONTENT_TYPE];
+          lessonToSkills: Array<{
+            count: number;
+            skill: Pick<Skill, CommonKey.ID | SkillKey.NAME>;
+          }>;
+        })[]
+      >();
 
-    const mappedLessons = lessons.map(({ lessonToSkills, ...lesson }: any) => {
-      const mappedSkills = lessonToSkills.map(({ count, skill }: any) => ({
+    const mappedLessons = lessons.map(({ lessonToSkills, ...lesson }) => {
+      const mappedSkills = lessonToSkills.map(({ count, skill }) => ({
         count,
         ...skill,
       }));
