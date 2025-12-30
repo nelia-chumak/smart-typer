@@ -1,12 +1,17 @@
-import { AppRoute, FormFieldLabel, FormFieldType, UserKey } from 'common/enums/enums';
+import {
+  AppRoute,
+  FormFieldLabel,
+  FormFieldType,
+  UserKey,
+} from 'common/enums/enums';
 import { FC, LogInRequestDto } from 'common/types/types';
 import { FormField, Link, Sign } from 'components/common/common';
 import {
   useDispatch,
-  useSelector,
-  useNavigate,
   useEffect,
   useForm,
+  useNavigate,
+  useSelector,
 } from 'hooks/hooks';
 import { auth as authActions } from 'store/modules/actions';
 import { logInSchema } from 'validation-schemas/validation-schemas';
@@ -43,10 +48,10 @@ const LogIn: FC = () => {
       header="Welcome back"
       description="Log in to your account to continue"
       submitText="Log in"
-      onSubmit={handleSubmit(handleSubmitForm)}
+      onSubmit={() => void handleSubmit(handleSubmitForm)}
       isSubmitDisabled={isLogInLoading}
       alternativeRoute={{
-        label: 'Don\'t have an account?',
+        label: "Don't have an account?",
         linkText: 'Sign up',
         path: AppRoute.SIGN_UP,
       }}

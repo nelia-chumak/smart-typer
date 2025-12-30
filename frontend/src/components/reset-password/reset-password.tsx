@@ -19,9 +19,7 @@ const ResetPassword: FC = () => {
     formState: { errors },
   } = useForm<ResetPasswordRequestDto>(resetPasswordSchema);
 
-  const handleSubmitForm = async (
-    data: ResetPasswordRequestDto,
-  ): Promise<void> => {
+  const handleSubmitForm = (data: ResetPasswordRequestDto): void => {
     void dispatch(authActions.resetPassword(data));
   };
 
@@ -31,7 +29,7 @@ const ResetPassword: FC = () => {
       header="Reset password"
       description="Enter your email to reset your password."
       submitText="Reset password"
-      onSubmit={handleSubmit(handleSubmitForm)}
+      onSubmit={() => void handleSubmit(handleSubmitForm)}
       isSubmitDisabled={isResetPasswordLoading}
     >
       <FormField

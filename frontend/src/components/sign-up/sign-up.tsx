@@ -1,4 +1,9 @@
-import { AppRoute, FormFieldLabel, FormFieldType, UserKey } from 'common/enums/enums';
+import {
+  AppRoute,
+  FormFieldLabel,
+  FormFieldType,
+  UserKey,
+} from 'common/enums/enums';
 import { FC, RegisterRequestDto } from 'common/types/types';
 import { FormField, Link, Sign } from 'components/common/common';
 import {
@@ -43,7 +48,7 @@ const SignUp: FC = () => {
       header="Get Started"
       description="Create new account to continue"
       submitText="Sign up"
-      onSubmit={handleSubmit(handleSubmitForm)}
+      onSubmit={() => void handleSubmit(handleSubmitForm)}
       isSubmitDisabled={isSignUpLoading}
       alternativeRoute={{
         label: 'Already have an account?',

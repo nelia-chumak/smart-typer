@@ -6,9 +6,9 @@
 
     .cardsContainer {
       display: flex;
-      justify-content: space-around;
-      align-items: center;
       flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-around;
 
       .card {
         width: 15vw;

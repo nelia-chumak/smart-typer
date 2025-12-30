@@ -1,18 +1,22 @@
 import {
+  CardHeaderColor,
   ContentWrapperSize,
   FormFieldLabel,
   FormFieldType,
   SettingsKey,
 } from 'common/enums/enums';
 import { FC, SettingsDto } from 'common/types/types';
-import { Button, ContentWrapper, FormField } from 'components/common/common';
-import { useSelector, useForm, useDispatch } from 'hooks/hooks';
-import { updateSettingsSchema } from 'validation-schemas/validation-schemas';
-import { settings as settingsActions } from 'store/modules/actions';
+import {
+  Button,
+  Card,
+  ContentWrapper,
+  FormField,
+} from 'components/common/common';
 import { RBForm } from 'components/external/external';
-import { Card } from 'components/common/common';
-import { CardHeaderColor } from 'common/enums/enums';
 import { clsx } from 'helpers/helpers';
+import { useDispatch, useForm, useSelector } from 'hooks/hooks';
+import { settings as settingsActions } from 'store/modules/actions';
+import { updateSettingsSchema } from 'validation-schemas/validation-schemas';
 
 import styles from './styles.module.scss';
 
@@ -125,7 +129,7 @@ const Settings: FC = () => {
           </div>
         </div>
         <Button
-          onClick={handleSubmit(handleSubmitForm)}
+          onClick={() => void handleSubmit(handleSubmitForm)}
           label="Apply"
           isLoading={isUpdateLoading}
           className={styles.submitButton}

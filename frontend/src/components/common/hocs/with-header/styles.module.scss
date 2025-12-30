@@ -1,12 +1,12 @@
 .withHeader {
-  max-width: 100vw;
-  width: 100%;
   display: grid;
   grid-template-rows: 60px 1fr;
+  width: 100%;
+  max-width: 100vw;
 
   .childComponent {
     min-height: calc(100vh - 60px);
-    background-image: url(../../../../assets/img/background.png);
+    background-image: url('../../../../assets/img/background.png');
     background-size: contain;
   }
 }

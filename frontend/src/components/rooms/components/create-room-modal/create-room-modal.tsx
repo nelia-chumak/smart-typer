@@ -5,10 +5,9 @@ import {
   VoidAction,
   VoidCallback,
 } from 'common/types/types';
-import { createRoomSchema } from 'validation-schemas/validation-schemas';
-import { FormField } from 'components/common/common';
-import { Modal } from 'components/common/common';
+import { FormField, Modal } from 'components/common/common';
 import { useForm } from 'hooks/hooks';
+import { createRoomSchema } from 'validation-schemas/validation-schemas';
 
 import styles from './styles.module.scss';
 
@@ -51,7 +50,7 @@ const CreateRoomModal: FC<Props> = ({
       submitButton={{
         label: 'Save',
         isDisabled: isSubmitting,
-        onClick: handleSubmit(onSubmit),
+        onClick: () => void handleSubmit(onSubmit),
       }}
       title="Create new room"
       className={styles.createRoomModal}

@@ -7,7 +7,7 @@
   },
   "scripts": {
     "lint:ts": "npx eslint src --ext ts,tsx",
-    "lint:css": "npx stylelint \"src/**/*.scss\" --syntax scss",
+    "lint:css": "npx stylelint \"src/**/*.scss\" --custom-syntax postcss-scss",
     "lint": "npm run lint:ts && npm run lint:css",
     "start": "vite",
     "build": "vite build",

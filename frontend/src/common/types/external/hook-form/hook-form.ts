@@ -1,1 +1,5 @@
-export type { FieldError, UseFormRegisterReturn } from 'react-hook-form';
+export type {
+  FieldError,
+  UseFormRegisterReturn,
+  ChangeHandler,
+} from 'react-hook-form';

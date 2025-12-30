@@ -7,11 +7,11 @@ import {
   useSelector,
   useState,
 } from 'hooks/hooks';
-import { auth as authActions } from 'store/modules/actions';
 import { navigation as navigationService } from 'services/services';
+import { auth as authActions } from 'store/modules/actions';
 
-import styles from './styles.module.scss';
 import { Spinner } from 'components/common/common';
+import styles from './styles.module.scss';
 
 const LogInGoogle: FC = () => {
   const dispatch = useDispatch();
@@ -20,7 +20,9 @@ const LogInGoogle: FC = () => {
   const { searchParams } = new URL(url);
   const code = searchParams.get('code');
   const [isInitialState, setIsInitialState] = useState(true);
-  const { authLogInGoogle: isGoogleRequestLoading } = useSelector((state) => state.requests);
+  const { authLogInGoogle: isGoogleRequestLoading } = useSelector(
+    (state) => state.requests,
+  );
 
   useEffect(() => {
     if (code) {
@@ -36,7 +38,7 @@ const LogInGoogle: FC = () => {
     }
   }, [isGoogleRequestLoading]);
 
-  const handleGoogle = async (code: string): Promise<void> => {
+  const handleGoogle = (code: string): void => {
     void dispatch(authActions.logInGoogle({ code }));
     setIsInitialState(false);
   };

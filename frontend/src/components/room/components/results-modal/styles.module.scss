@@ -2,11 +2,13 @@
   width: 50vw !important;
 
   .modalBody {
-    font-size: 1.5rem !important;
     display: flex;
     align-items: center;
-    height: 25rem;
+
     width: 100%;
+    height: 25rem;
+
+    font-size: 1.5rem !important;
 
     .chart {
       width: 60%;

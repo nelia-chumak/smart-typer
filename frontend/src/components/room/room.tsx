@@ -130,7 +130,7 @@ const Room: FC = () => {
     void dispatch(lessonsActions.sendLessonResult());
   };
 
-  const handleCloseResultsModal = async (): Promise<void> => {
+  const handleCloseResultsModal = (): void => {
     setIsResultsModalVisible(false);
     void dispatch(racingActions.resetCurrentRoomToDefault());
     void dispatch(racingActions.removeLessonId({ roomId }));

@@ -38,7 +38,7 @@ const SetPassword: FC = () => {
     navigate(AppRoute.LOG_IN);
   }
 
-  const handleSubmitForm = async (data: NewPassword): Promise<void> => {
+  const handleSubmitForm = (data: NewPassword): void => {
     const { password } = data;
     void dispatch(authActions.setPassword({ password, token }));
   };
@@ -54,7 +54,7 @@ const SetPassword: FC = () => {
       header="Set your new password"
       description="Enter your new password."
       submitText="Save"
-      onSubmit={handleSubmit(handleSubmitForm)}
+      onSubmit={() => void handleSubmit(handleSubmitForm)}
       isSubmitDisabled={isSetPasswordLoading}
     >
       <FormField

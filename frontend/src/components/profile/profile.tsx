@@ -10,7 +10,7 @@ import {
   UserKey,
   ValidationErrorMessage,
 } from 'common/enums/enums';
-import { FC, UserDto } from 'common/types/types';
+import { ChangeHandler, FC, UserDto } from 'common/types/types';
 import {
   Avatar,
   Button,
@@ -104,9 +104,7 @@ const Profile: FC = () => {
     inputRef.current?.click();
   };
 
-  const handleApplyChanges = async (
-    data: Omit<UserDto, CommonKey.ID>,
-  ): Promise<void> => {
+  const handleApplyChanges = (data: Omit<UserDto, CommonKey.ID>): void => {
     const changes: Partial<Omit<UserDto, CommonKey.ID>> = _.omitBy(
       data,
       (value, key) => {
@@ -126,24 +124,27 @@ const Profile: FC = () => {
     }
   };
 
-  const handleFileSelected = (
-    fileSelectedEvent: React.ChangeEvent<HTMLInputElement>,
-  ): void => {
-    const [file] = fileSelectedEvent.target.files ?? [];
-    if (file) {
-      const { size, type } = file;
-      const sizeInMegabytes = bytesToMegabytes(size);
-      if (sizeInMegabytes > MAX_FILE_SIZE) {
-        notificationService.error(ValidationErrorMessage.INVALID_FILE_SIZE);
-        return;
-      }
-      if (!ALLOWED_FILE_TYPES.includes(type)) {
-        notificationService.error(ValidationErrorMessage.FORBIDDEN_FILE_TYPE);
-        return;
-      }
-      setSelectedFile(file);
-      setIsCropModalVisible(true);
+  const handleFileSelected: ChangeHandler = (event) => {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return Promise.resolve();
+
+    const { size, type } = file;
+    const sizeInMegabytes = bytesToMegabytes(size);
+
+    if (sizeInMegabytes > MAX_FILE_SIZE) {
+      notificationService.error(ValidationErrorMessage.INVALID_FILE_SIZE);
+      return Promise.resolve();
     }
+
+    if (!ALLOWED_FILE_TYPES.includes(type)) {
+      notificationService.error(ValidationErrorMessage.FORBIDDEN_FILE_TYPE);
+      return Promise.resolve();
+    }
+
+    setSelectedFile(file);
+    setIsCropModalVisible(true);
+    return Promise.resolve();
   };
 
   const handleCropModalClose = (): void => {
@@ -153,10 +154,10 @@ const Profile: FC = () => {
     setIsCropModalVisible(false);
   };
 
-  const handleUpdateAvatar = async (
+  const handleUpdateAvatar = (
     croppedFile: File,
     croppedFileUrl: string,
-  ): Promise<void> => {
+  ): void => {
     setSelectedFile(croppedFile);
     setValue(UserKey.PHOTO_URL as keyof UserDto, croppedFileUrl, {
       shouldDirty: true,
@@ -254,7 +255,7 @@ const Profile: FC = () => {
           <div className={styles.submitButtonContainer}>
             {isCurrentUser && (
               <Button
-                onClick={handleSubmit(handleApplyChanges)}
+                onClick={() => void handleSubmit(handleApplyChanges)}
                 isLoading={isApplyLoading}
                 label="Apply"
                 className={clsx(styles.button, styles.submitButton)}

@@ -154,7 +154,7 @@ const ShareRoomModal: FC<Props> = ({
         </div>
       </FormField>
       <Button
-        onClick={handleSubmit(handleSend)}
+        onClick={() => void handleSubmit(handleSend)}
         className={styles.sendButton}
         isDisabled={isRoomUrlSending}
         label="Send"

@@ -54,7 +54,7 @@ class Racing {
 
   public setPersonalRoomAsCurrent = createAsyncThunk(
     ActionType.SET_PERSONAL_ROOM_AS_CURRENT,
-    async (_: undefined, { dispatch, getState }): Promise<void> => {
+    (_: undefined, { dispatch, getState }): void => {
       const {
         racing: { personalRoom },
         settings: { gameTime, countdownBeforeGame },
@@ -70,10 +70,7 @@ class Racing {
 
   public setCurrentRoom = createAsyncThunk(
     ActionType.SET_CURRENT_ROOM,
-    async (
-      payload: GameRoomWithOptionalFields,
-      { dispatch },
-    ): Promise<GameRoom> => {
+    (payload: GameRoomWithOptionalFields, { dispatch }): GameRoom => {
       const currentRoom = mapRoomToGameRoom(payload);
       const { id: roomId } = payload;
       void dispatch(this.joinRoom({ roomId }));
@@ -270,7 +267,7 @@ class Racing {
 
   public resetCurrentRoomToDefault = createAsyncThunk(
     ActionType.RESET_CURRENT_ROOM_TO_DEFAULT,
-    async (_: undefined, { getState }): Promise<void | GameRoom> => {
+    (_: undefined, { getState }): void | GameRoom => {
       const {
         racing: { currentRoom },
       } = getState();
