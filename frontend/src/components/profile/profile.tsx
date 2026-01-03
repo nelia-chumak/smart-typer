@@ -114,8 +114,7 @@ const Profile: FC = () => {
     if (changes.photoUrl && selectedFile) {
       void dispatch(profileActions.updateAvatar(selectedFile));
       setSelectedFile(null);
-    }
-    if (_.isNull(changes.photoUrl)) {
+    } else if (_.isNull(changes.photoUrl)) {
       void dispatch(profileActions.deleteAvatar());
     }
     if (changes.email || changes.nickname) {

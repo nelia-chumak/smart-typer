@@ -32,7 +32,7 @@
     "start:backend": "cd backend && npm run start",
     "start:dev:backend": "cd backend && npm run start:dev",
     "start:frontend": "cd frontend && npm run start",
-    "start:dev": "concurrently -k -p \"{name}\" -n \"FRONTEND,BACKEND\" -c \"green,blue\" \"npm:start:frontend\" \"npm:start:backend\"",
+    "start:dev": "concurrently -k -p \"{name}\" -n \"FRONTEND,BACKEND\" -c \"green,blue\" \"npm:start:frontend\" \"npm:start:dev:backend\"",
     "start": "cd build && npm run start",
     "heroku-prebuild": "npm run install:all",
     "heroku-postbuild": "npm run build && npm run move:deploy"
