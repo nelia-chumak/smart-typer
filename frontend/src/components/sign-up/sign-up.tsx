@@ -48,7 +48,7 @@ const SignUp: FC = () => {
       header="Get Started"
       description="Create new account to continue"
       submitText="Sign up"
-      onSubmit={() => void handleSubmit(handleSubmitForm)}
+      onSubmit={() => void handleSubmit(handleSubmitForm)()}
       isSubmitDisabled={isSignUpLoading}
       alternativeRoute={{
         label: 'Already have an account?',

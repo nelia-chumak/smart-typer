@@ -94,7 +94,7 @@ const CropAvatar: FC<Props> = ({
       submitButton={{
         isDisabled: !src,
         label: 'OK',
-        onClick: () => void handleSubmit,
+        onClick: () => void handleSubmit(),
       }}
       cancelButton={{
         isDisabled: !src,

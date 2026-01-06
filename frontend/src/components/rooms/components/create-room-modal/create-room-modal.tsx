@@ -50,7 +50,7 @@ const CreateRoomModal: FC<Props> = ({
       submitButton={{
         label: 'Save',
         isDisabled: isSubmitting,
-        onClick: () => void handleSubmit(onSubmit),
+        onClick: () => void handleSubmit(onSubmit)(),
       }}
       title="Create new room"
       className={styles.createRoomModal}

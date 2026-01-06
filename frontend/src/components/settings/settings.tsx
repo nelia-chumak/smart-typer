@@ -129,7 +129,7 @@ const Settings: FC = () => {
           </div>
         </div>
         <Button
-          onClick={() => void handleSubmit(handleSubmitForm)}
+          onClick={() => void handleSubmit(handleSubmitForm)()}
           label="Apply"
           isLoading={isUpdateLoading}
           className={styles.submitButton}

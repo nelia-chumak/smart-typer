@@ -254,7 +254,7 @@ const Profile: FC = () => {
           <div className={styles.submitButtonContainer}>
             {isCurrentUser && (
               <Button
-                onClick={() => void handleSubmit(handleApplyChanges)}
+                onClick={() => void handleSubmit(handleApplyChanges)()}
                 isLoading={isApplyLoading}
                 label="Apply"
                 className={clsx(styles.button, styles.submitButton)}

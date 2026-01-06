@@ -29,7 +29,7 @@ const ResetPassword: FC = () => {
       header="Reset password"
       description="Enter your email to reset your password."
       submitText="Reset password"
-      onSubmit={() => void handleSubmit(handleSubmitForm)}
+      onSubmit={() => void handleSubmit(handleSubmitForm)()}
       isSubmitDisabled={isResetPasswordLoading}
     >
       <FormField

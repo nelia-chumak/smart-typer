@@ -74,7 +74,7 @@ const CreateLessonModal: FC<Props> = ({
       submitButton={{
         label: 'Save',
         isDisabled: isSubmitting,
-        onClick: () => void handleSubmit(onSubmit),
+        onClick: () => void handleSubmit(onSubmit)(),
       }}
       title="Create new lesson"
       className={styles.createRoomModal}

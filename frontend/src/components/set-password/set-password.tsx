@@ -54,7 +54,7 @@ const SetPassword: FC = () => {
       header="Set your new password"
       description="Enter your new password."
       submitText="Save"
-      onSubmit={() => void handleSubmit(handleSubmitForm)}
+      onSubmit={() => void handleSubmit(handleSubmitForm)()}
       isSubmitDisabled={isSetPasswordLoading}
     >
       <FormField

@@ -48,7 +48,7 @@ const LogIn: FC = () => {
       header="Welcome back"
       description="Log in to your account to continue"
       submitText="Log in"
-      onSubmit={() => void handleSubmit(handleSubmitForm)}
+      onSubmit={() => void handleSubmit(handleSubmitForm)()}
       isSubmitDisabled={isLogInLoading}
       alternativeRoute={{
         label: "Don't have an account?",
