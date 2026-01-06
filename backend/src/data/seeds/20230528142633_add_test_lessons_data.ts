@@ -31,29 +31,25 @@ export async function seed(knex: Knex): Promise<void> {
     .insert(testLessonsData)
     .returning(['id', 'content']);
 
-  await knex.transaction((transaction) => {
-    const queries: Knex.Raw<unknown>[] = [];
-    lessons.forEach(({ id, content }) => {
-      const contentReplaced = content.replace(/'/g, '"');
-      const query = knex
-        .raw(
-          `
-          WITH skill_count AS (
-            SELECT ${id} AS lesson_id, skills.id AS skill_id, COUNT(matches)
-            FROM skills,
-            LATERAL regexp_matches('${contentReplaced}', skills.name, 'gi') AS matches
-            GROUP BY skills.id
-          )
-          INSERT INTO lessons_to_skills (lesson_id, skill_id, count)
-          SELECT * FROM skill_count
-          WHERE count > 0;
-          `,
-        )
-        .transacting(transaction);
-      queries.push(query);
-    });
-    Promise.all(queries)
-      .then(() => transaction.commit())
-      .catch(() => transaction.rollback());
+  const lessonsJson = JSON.stringify(
+    lessons.map(({ id, content }) => ({ id, content })),
+  );
+
+  await knex.transaction(async (trx) => {
+    await trx.raw(
+      `
+      INSERT INTO lessons_to_skills (lesson_id, skill_id, count)
+      SELECT
+        lessons.id         AS lesson_id,
+        skills.id          AS skill_id,
+        COUNT(match_count) AS count
+      FROM jsonb_to_recordset(?::jsonb) AS lessons(id int, content text)
+      CROSS JOIN skills
+      CROSS JOIN LATERAL regexp_matches(lessons.content, skills.name, 'gi') AS match_count
+      GROUP BY lessons.id, skills.id
+      HAVING COUNT(match_count) > 0;
+      `,
+      [lessonsJson],
+    );
   });
 }

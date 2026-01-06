@@ -54,5 +54,8 @@ export async function seed(knex: Knex): Promise<void> {
   const skills = await getSkills();
   if (!skills.length) return;
 
-  await knex('skills').insert(skills.map((name) => ({ name })));
+  await knex('skills')
+    .insert(skills.map((name) => ({ name })))
+    .onConflict('name')
+    .ignore();
 }
