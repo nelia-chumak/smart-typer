@@ -296,8 +296,11 @@ class User {
       .innerJoinRelated(UserRelationMappings.SETTINGS)
       .where((builder) => {
         builder
-          .where(SettingsKey.IS_SHOWN_IN_RATING, true)
-          .orWhere({ [SettingsKey.USER_ID]: userId });
+          .where(
+            `${TableName.SETTINGS}.${SettingsKey.IS_SHOWN_IN_RATING}`,
+            true,
+          )
+          .orWhere(`${TableName.USERS}.${CommonKey.ID}`, userId);
       })
       .castTo<Rating>();
   }
