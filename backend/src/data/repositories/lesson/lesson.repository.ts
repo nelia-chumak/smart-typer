@@ -164,19 +164,18 @@ class Lesson {
         content,
       };
 
-      await trx(TableName.LESSONS_TO_SKILLS).insert(
-        trx
-          .select(
-            trx.raw('? as lesson_id', [lesson.id]),
-            trx.ref(`${TableName.SKILLS}.${CommonKey.ID}`).as('skill_id'),
-            trx.raw('count(*)::int as count'),
-          )
-          .from(TableName.SKILLS)
-          .joinRaw(
-            `CROSS JOIN LATERAL regexp_matches(?, ${TableName.SKILLS}.${SkillKey.NAME}, 'gi') as matches`,
-            [content],
-          )
-          .groupBy(`${TableName.SKILLS}.${CommonKey.ID}`),
+      await trx.raw(
+        `
+        INSERT INTO lessons_to_skills (lesson_id, skill_id, count)
+        SELECT
+          ?                  AS lesson_id,
+          skills.id          AS skill_id,
+          COUNT(*)::int      AS count
+        FROM skills
+        CROSS JOIN LATERAL regexp_matches(?, skills.name, 'gi') AS match_text
+        GROUP BY skills.id
+        `,
+        [lesson.id, content],
       );
 
       return lesson;
@@ -205,7 +204,7 @@ class Lesson {
 
     const bestSkillQuery = this._UserToFinishedLessonModel
       .query()
-      .select(`${TableName.SKILLS}.${SkillKey.NAME}`)
+      .select(`${UserToFinishedLessonRelationMapping.SKILL}.${SkillKey.NAME}`)
       .joinRelated(UserToFinishedLessonRelationMapping.SKILL)
       .where(
         `${TableName.USERS_TO_FINISHED_LESSONS}.${UserToFinishedLessonKey.USER_ID}`,
@@ -230,9 +229,7 @@ class Lesson {
         LessonKey.CONTENT_TYPE,
         bestSkillQuery,
       )
-      .orderByRaw(`CASE WHEN ${LessonKey.CREATOR_ID} = ? THEN 0 ELSE 1 END`, [
-        userId,
-      ])
+      .orderByRaw(`CASE WHEN creator_id = ? THEN 0 ELSE 1 END`, [userId])
       .orderBy(
         `${TableName.LESSONS}.${CommonKey.CREATED_AT}`,
         RecordsSortOrder.ASC,
@@ -278,7 +275,7 @@ class Lesson {
   ): Promise<LessonDto[]> {
     const bestSkillQuery = this._UserToFinishedLessonModel
       .query()
-      .select(`${TableName.SKILLS}.${SkillKey.NAME}`)
+      .select(`${UserToFinishedLessonRelationMapping.SKILL}.${SkillKey.NAME}`)
       .joinRelated(UserToFinishedLessonRelationMapping.SKILL)
       .where(
         `${TableName.USERS_TO_FINISHED_LESSONS}.${UserToFinishedLessonKey.USER_ID}`,

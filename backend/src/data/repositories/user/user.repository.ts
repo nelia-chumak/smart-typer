@@ -174,10 +174,6 @@ class User {
         }
       >();
 
-    if (!queryResult?.userToRooms) {
-      return;
-    }
-
     const { userToRooms, ...rest } = queryResult;
 
     return {
