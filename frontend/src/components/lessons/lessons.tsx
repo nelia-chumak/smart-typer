@@ -30,12 +30,14 @@ import {
   CONTENT_TYPE_OPTIONS,
   CREATOR_TYPE_OPTIONS,
 } from './common/constants/constants';
-import { CategoryWrapper, CreateLessonModal } from './components/components';
+import { CreateLessonModal } from './components/components';
 import { getFiltersParams } from './helpers/helpers';
 
 import styles from './styles.module.scss';
+import { clsx } from 'helpers/helpers';
 
-const FIRST_ARR_ELEM_INDEX = 0;
+const getCategoryTitle = (creatorType: CreatorType): string =>
+  creatorType === CreatorType.CURRENT_USER ? 'Personal' : 'Others';
 
 const Lessons: FC = () => {
   const { lessons, isLessonCreating, allLessonsCount } = useSelector(
@@ -142,32 +144,26 @@ const Lessons: FC = () => {
         className={styles.infiniteScroll}
       >
         <div className={styles.lessonCards}>
-          {areFiltersSet
-            ? lessons.map((lesson) => (
+          {lessons.map((lesson, i) => {
+            const showTitle =
+              !areFiltersSet &&
+              lessons[i - 1]?.creatorType !== lesson.creatorType;
+
+            return (
+              <div
+                key={lesson.id}
+                className={clsx(showTitle && styles.lessonCardWithTitle)}
+              >
+                {showTitle && <h1>{getCategoryTitle(lesson.creatorType)}</h1>}
+
                 <LessonCard
-                  key={lesson.id}
                   lesson={lesson}
                   onArMarkerClick={setArMarkerSymbol}
                   onDeleteLesson={handleDeleteLesson}
                 />
-              ))
-            : lessons.map((lesson, i, lessons) => (
-                <CategoryWrapper
-                  key={lesson.id}
-                  currentLessonCreatorType={lesson.creatorType}
-                  prevLessonCreatorType={
-                    i !== FIRST_ARR_ELEM_INDEX
-                      ? lessons[i - 1].creatorType
-                      : undefined
-                  }
-                >
-                  <LessonCard
-                    lesson={lesson}
-                    onArMarkerClick={setArMarkerSymbol}
-                    onDeleteLesson={handleDeleteLesson}
-                  />
-                </CategoryWrapper>
-              ))}
+              </div>
+            );
+          })}
         </div>
       </ReactInfiniteScroll>
       <CreateLessonModal
