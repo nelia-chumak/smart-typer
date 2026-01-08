@@ -19,7 +19,12 @@ import {
   Spinner,
 } from 'components/common/common';
 import { RBForm } from 'components/external/external';
-import { bytesToMegabytes, clsx, replaceRouteIdParam } from 'helpers/helpers';
+import {
+  bytesToMegabytes,
+  clsx,
+  replaceRouteIdParam,
+  lodash as _,
+} from 'helpers/helpers';
 import {
   useDispatch,
   useEffect,
@@ -30,7 +35,6 @@ import {
   useSelector,
   useState,
 } from 'hooks/hooks';
-import _ from 'lodash';
 import { notification as notificationService } from 'services/services';
 import { profile as profileActions } from 'store/modules/actions';
 import { updateUserInfoSchema } from 'validation-schemas/validation-schemas';

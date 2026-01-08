@@ -45,7 +45,7 @@ import {
   UserToFinishedLesson as UserToFinishedLessonModel,
 } from 'data/models/models';
 import { transaction } from 'dependencies/dependencies';
-import { defineCreatorType } from 'helpers/helpers';
+import { defineCreatorType, toSnakeCase } from 'helpers/helpers';
 
 type Constructor = {
   LessonModel: typeof LessonModel;
@@ -229,7 +229,10 @@ class Lesson {
         LessonKey.CONTENT_TYPE,
         bestSkillQuery,
       )
-      .orderByRaw(`CASE WHEN creator_id = ? THEN 0 ELSE 1 END`, [userId])
+      .orderByRaw(
+        `CASE WHEN ${toSnakeCase(LessonKey.CREATOR_ID)} = ? THEN 0 ELSE 1 END`,
+        [userId],
+      )
       .orderBy(
         `${TableName.LESSONS}.${CommonKey.CREATED_AT}`,
         RecordsSortOrder.ASC,

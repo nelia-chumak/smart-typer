@@ -19,6 +19,7 @@ import {
   Transaction,
 } from 'common/types/types';
 import { Room as RoomModel } from 'data/models/models';
+import { toSnakeCase } from 'helpers/helpers';
 
 type Constructor = {
   RoomModel: typeof RoomModel;
@@ -150,7 +151,7 @@ class Room {
       .query()
       .delete()
       .whereRaw(
-        `${TableName.ROOMS}.${CommonKey.CREATED_AT}::date < CURRENT_DATE`,
+        `${TableName.ROOMS}.${toSnakeCase(CommonKey.CREATED_AT)}::date < CURRENT_DATE`,
       )
       .whereNotExists(
         this._RoomModel
@@ -158,7 +159,7 @@ class Room {
           .select(1)
           .from(TableName.USERS_TO_ROOMS)
           .whereRaw(
-            `${TableName.USERS_TO_ROOMS}.${UserToRoomKey.CURRENT_ROOM_ID} = ${TableName.ROOMS}.${CommonKey.ID}`,
+            `${TableName.USERS_TO_ROOMS}.${toSnakeCase(UserToRoomKey.CURRENT_ROOM_ID)} = ${TableName.ROOMS}.${CommonKey.ID}`,
           ),
       )
       .whereNotExists(
@@ -167,7 +168,7 @@ class Room {
           .select(1)
           .from(TableName.USERS_TO_ROOMS)
           .whereRaw(
-            `${TableName.USERS_TO_ROOMS}.${UserToRoomKey.PERSONAL_ROOM_ID} = ${TableName.ROOMS}.${CommonKey.ID}`,
+            `${TableName.USERS_TO_ROOMS}.${toSnakeCase(UserToRoomKey.PERSONAL_ROOM_ID)} = ${TableName.ROOMS}.${CommonKey.ID}`,
           ),
       );
   }
