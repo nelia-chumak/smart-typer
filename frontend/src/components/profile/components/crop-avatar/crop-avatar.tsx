@@ -22,11 +22,11 @@ const CropAvatar: FC<Props> = ({
   onUpdateAvatar,
 }) => {
   const [crop, setCrop] = useState<Crop>({
-    unit: '%',
+    unit: 'px',
     x: 0,
     y: 0,
-    width: 130,
-    height: 130,
+    width: 100,
+    height: 100,
   });
   const [image, setImage] = useState<HTMLImageElement | null>(null);
 
@@ -40,6 +40,15 @@ const CropAvatar: FC<Props> = ({
 
   const onImageLoaded = (photo: HTMLImageElement): void => {
     setImage(photo);
+
+    const size = Math.min(photo.width, photo.height, 800);
+    setCrop({
+      unit: 'px',
+      width: size,
+      height: size,
+      x: Math.round((photo.width - size) / 2),
+      y: Math.round((photo.height - size) / 2),
+    });
   };
 
   const getCroppedPhoto = (
