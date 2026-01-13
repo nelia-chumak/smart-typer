@@ -128,7 +128,7 @@ class Room {
         `count(distinct ${TableName.USERS_TO_ROOMS}.${CommonKey.ID}) < ?`,
         [MAX_USERS_IN_ROOM],
       )
-      .withGraphJoined(`[${RoomRelationMappings.PARTICIPANTS}]`)
+      .withGraphFetched(`[${RoomRelationMappings.PARTICIPANTS}]`)
       .modifyGraph(RoomRelationMappings.PARTICIPANTS, (builder) => {
         builder.select(CommonKey.ID, UserKey.NICKNAME, UserKey.PHOTO_URL);
       })

@@ -24,7 +24,12 @@ import {
   Spinner,
 } from 'components/common/common';
 import { ReactInfiniteScroll } from 'components/external/external';
-import { useDispatch, useEffect, useSelector, useState } from 'hooks/hooks';
+import {
+  useDispatch,
+  useEffect,
+  useShallowSelector,
+  useState,
+} from 'hooks/hooks';
 import { lessons as lessonsActions } from 'store/modules/actions';
 import {
   CONTENT_TYPE_OPTIONS,
@@ -40,7 +45,7 @@ const getCategoryTitle = (creatorType: CreatorType): string =>
   creatorType === CreatorType.CURRENT_USER ? 'Personal' : 'Others';
 
 const Lessons: FC = () => {
-  const { lessons, isLessonCreating, allLessonsCount } = useSelector(
+  const { lessons, isLessonCreating, allLessonsCount } = useShallowSelector(
     ({ lessons, requests }) => ({
       lessons: lessons.lessons,
       allLessonsCount: lessons.allLessonsCount,
@@ -75,7 +80,6 @@ const Lessons: FC = () => {
 
   const handleCreateLessonSubmit = (payload: CreateLessonRequestDto): void => {
     void dispatch(lessonsActions.create(payload));
-    setIsCreateLessonModalVisible(false);
   };
 
   const handleLoadMoreLessons = (): void => {

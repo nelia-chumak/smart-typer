@@ -12,7 +12,7 @@ import {
   useForm,
   useNavigate,
   useSearchParams,
-  useSelector,
+  useShallowSelector,
 } from 'hooks/hooks';
 import { auth as authActions } from 'store/modules/actions';
 import { setPasswordSchema } from 'validation-schemas/validation-schemas';
@@ -21,10 +21,12 @@ import { NewPassword } from './common/types/types';
 const SetPassword: FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { isSetPasswordLoading, user } = useSelector(({ auth, requests }) => ({
-    user: auth.user,
-    isSetPasswordLoading: requests.authSetPassword,
-  }));
+  const { isSetPasswordLoading, user } = useShallowSelector(
+    ({ auth, requests }) => ({
+      user: auth.user,
+      isSetPasswordLoading: requests.authSetPassword,
+    }),
+  );
   const {
     register,
     handleSubmit,

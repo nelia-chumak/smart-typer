@@ -3,16 +3,18 @@ import { AlternativePrioritiesVector } from 'common/types/types.js';
 const calculateAcceptableAlternatives = (
   globalPrioritiesWithIds: AlternativePrioritiesVector,
 ): AlternativePrioritiesVector => {
-  const globalPrioritiesLength = globalPrioritiesWithIds.length;
-  const bestAlternative = globalPrioritiesWithIds.pop()!;
+  const n = globalPrioritiesWithIds.length;
 
-  const globalPrioritiesResult = globalPrioritiesWithIds.filter(
-    (globalPriority) =>
-      bestAlternative.value - globalPriority.value <
-      1 / (globalPrioritiesLength - 1),
-  );
+  if (n <= 1) {
+    return [...globalPrioritiesWithIds];
+  }
 
-  return [...globalPrioritiesResult, bestAlternative];
+  const sorted = [...globalPrioritiesWithIds].sort((a, b) => a.value - b.value);
+
+  const best = sorted[n - 1];
+  const threshold = 1 / (n - 1);
+
+  return sorted.filter((alt) => best.value - alt.value < threshold);
 };
 
 export { calculateAcceptableAlternatives };

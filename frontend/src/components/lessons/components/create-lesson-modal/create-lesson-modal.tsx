@@ -63,6 +63,12 @@ const CreateLessonModal: FC<Props> = ({
     onClose();
   };
 
+  const handleFormSubmit = (data: CreateLessonRequestDto): void => {
+    onSubmit(data);
+    reset();
+    onClose();
+  };
+
   return (
     <Modal
       isVisible={isVisible}
@@ -74,7 +80,7 @@ const CreateLessonModal: FC<Props> = ({
       submitButton={{
         label: 'Save',
         isDisabled: isSubmitting,
-        onClick: () => void handleSubmit(onSubmit)(),
+        onClick: () => void handleSubmit(handleFormSubmit)(),
       }}
       title="Create new lesson"
       className={styles.createRoomModal}

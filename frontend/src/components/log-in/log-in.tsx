@@ -11,7 +11,7 @@ import {
   useEffect,
   useForm,
   useNavigate,
-  useSelector,
+  useShallowSelector,
 } from 'hooks/hooks';
 import { auth as authActions } from 'store/modules/actions';
 import { logInSchema } from 'validation-schemas/validation-schemas';
@@ -19,7 +19,7 @@ import { logInSchema } from 'validation-schemas/validation-schemas';
 const LogIn: FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { authError, user, isLogInLoading } = useSelector(
+  const { authError, user, isLogInLoading } = useShallowSelector(
     ({ auth, requests }) => ({
       authError: auth.error,
       user: auth.user,

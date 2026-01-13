@@ -43,6 +43,7 @@ import {
 import {
   Lesson as LessonModel,
   UserToFinishedLesson as UserToFinishedLessonModel,
+  UserToStudyPlanLesson as UserToStudyPlanLessonModel,
 } from 'data/models/models';
 import { transaction } from 'dependencies/dependencies';
 import { defineCreatorType, toSnakeCase } from 'helpers/helpers';
@@ -50,15 +51,18 @@ import { defineCreatorType, toSnakeCase } from 'helpers/helpers';
 type Constructor = {
   LessonModel: typeof LessonModel;
   UserToFinishedLessonModel: typeof UserToFinishedLessonModel;
+  UserToStudyPlanLessonModel: typeof UserToStudyPlanLessonModel;
 };
 
 class Lesson {
   private _LessonModel: typeof LessonModel;
   private _UserToFinishedLessonModel: typeof UserToFinishedLessonModel;
+  private _UserToStudyPlanLessonModel: typeof UserToStudyPlanLessonModel;
 
   public constructor(params: Constructor) {
     this._LessonModel = params.LessonModel;
     this._UserToFinishedLessonModel = params.UserToFinishedLessonModel;
+    this._UserToStudyPlanLessonModel = params.UserToStudyPlanLessonModel;
   }
 
   private static DEFAULT_LESSON_COLUMNS_TO_RETURN: string[] = [
@@ -407,18 +411,17 @@ class Lesson {
       UserToStudyPlanLessonKey.PRIORITY | UserToStudyPlanLessonKey.LESSON_ID
     >
   > {
-    return this._LessonModel
+    return this._UserToStudyPlanLessonModel
       .query()
       .select(
-        `${LessonRelationMappings.STUDY_PLAN}.${UserToStudyPlanLessonKey.PRIORITY}`,
-        `${LessonRelationMappings.STUDY_PLAN}.${UserToStudyPlanLessonKey.LESSON_ID}`,
+        UserToStudyPlanLessonKey.PRIORITY,
+        UserToStudyPlanLessonKey.LESSON_ID,
       )
-      .innerJoinRelated(LessonRelationMappings.STUDY_PLAN)
-      .orderBy(
-        `${LessonRelationMappings.STUDY_PLAN}.${UserToStudyPlanLessonKey.PRIORITY}`,
-        RecordsSortOrder.DESC,
-      )
-      .findOne({ userId })
+      .where(UserToStudyPlanLessonKey.USER_ID, userId)
+      .orderBy(UserToStudyPlanLessonKey.PRIORITY, RecordsSortOrder.DESC)
+      .orderBy(CommonKey.CREATED_AT, RecordsSortOrder.DESC)
+      .orderBy(CommonKey.ID, RecordsSortOrder.DESC)
+      .first()
       .castTo<
         Pick<
           IUserToStudyPlanLessonRecord,

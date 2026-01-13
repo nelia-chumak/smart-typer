@@ -1,6 +1,5 @@
 enum ActionType {
   SET_PERSONAL_ROOM = 'racingSetPersonalRoom',
-  SET_PERSONAL_ROOM_AS_CURRENT = 'racingSetPersonalRoomAsCurrent',
   LOAD_CURRENT_ROOM = 'racingLoadCurrentRoom',
   SET_CURRENT_ROOM = 'racingSetCurrentRoom',
   LOAD_AVAILABLE_ROOMS = 'racingLoadAvailableRooms',

@@ -3,21 +3,148 @@
 .shareRoomModal {
   width: 25vw !important;
 
-  .email {
-    font-size: $middle-font-size !important;
-    color: $dark-blue !important;
-    background-color: $light-grey !important;
+  .emailsRoot {
+    width: 100%;
   }
 
-  .emailsInput {
+  .label {
+    display: none;
+  }
+
+  .comboBox {
+    position: relative;
+
+    display: flex;
+    flex-wrap: wrap;
+
+    width: 100%;
+    min-height: 3.5rem;
+    padding: 0.5rem 0.75rem;
     border: $main-border;
     border-radius: 0;
 
-    &.focused {
-      border-color: $main-green !important;
-      color: $dark-blue !important;
-      box-shadow: $input-shadow;
+    background: $white;
+  }
+
+  .emailsRootActive .comboBox {
+    border-color: $main-green !important;
+    box-shadow: $input-shadow;
+  }
+
+  .tagList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+
+    width: auto;
+    margin: 0;
+    margin-bottom: 1rem;
+    padding: 0;
+
+    list-style: none;
+  }
+
+  .input {
+    flex: 1 1 auto;
+
+    width: 100%;
+    height: 2.5rem;
+    border: 0;
+
+    background: transparent;
+    outline: none;
+    box-shadow: none;
+
+    &::placeholder {
+      font-size: $middle-font-size;
+      color: $dark-grey;
     }
+  }
+
+  .listBox {
+    position: absolute;
+    z-index: 20;
+    top: calc(100% + 0.5rem);
+    left: 0;
+
+    overflow: auto;
+
+    width: 100%;
+    margin: 0;
+    padding: 0.25rem 0;
+    border: $main-border;
+    border-radius: 0;
+
+    background: $white;
+  }
+
+  .option {
+    cursor: pointer;
+    user-select: none;
+
+    display: block;
+
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 0 !important;
+
+    text-align: left;
+
+    background: transparent;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  .optionActive {
+    background: $light-grey;
+  }
+
+  .option[aria-disabled='true'] {
+    pointer-events: none;
+    cursor: default;
+    opacity: 50%;
+  }
+
+  .emailTag {
+    cursor: default;
+
+    display: inline-flex;
+    gap: 0.5rem;
+    align-items: center;
+
+    height: 2.5rem;
+    padding: 0 0.75rem;
+    border: 0 !important;
+    border-radius: 0;
+
+    font-size: $middle-font-size;
+    color: $dark-blue;
+
+    background: $light-grey;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  .emailTagName {
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .emailTagRemove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 0;
+
+    color: $dark-grey;
+  }
+
+  .emailTagRemove:hover {
+    background: rgb(0 0 0 / 6%);
   }
 
   .sendButton {

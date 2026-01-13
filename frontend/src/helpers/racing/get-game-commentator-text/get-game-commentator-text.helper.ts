@@ -2,6 +2,7 @@ import { CommentatorEvent } from 'common/enums/enums';
 import { Participant } from 'common/types/types';
 import {
   CAR_TEXT,
+  CURRENT_SITUATION_TEXT,
   GREETING_TEXT,
   TODAY_PARTICIPANTS_TEXT,
 } from './common/constants/constants';
@@ -35,7 +36,7 @@ const getGameCommentatorText = (
         },
       );
       return generateTextWithParticipantsEnumeration(
-        TODAY_PARTICIPANTS_TEXT,
+        CURRENT_SITUATION_TEXT,
         participantsRating,
       );
     }

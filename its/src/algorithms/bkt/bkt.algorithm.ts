@@ -19,6 +19,7 @@ const bkt = (payload: BktPayload): BktResult => {
     )!;
     return { ...skill, pWillLearn };
   });
+
   const skillsLearnedProbability = calculateLearnedProbability({
     skills: skillsWillLearnAndKnowProbability,
     skillsPGuess,

@@ -10,21 +10,16 @@ import {
   IPaginationResponse,
 } from 'common/interfaces/interfaces';
 import {
-  LessonDto,
-  LessonResponseDto,
   CreateLessonRequestDto,
-  SkillsStatisticsDto,
-  Skill,
-  UserDto,
   FinishedLesson,
+  LessonDto,
   LessonFilters,
+  LessonResponseDto,
   RequiredLessonIdDto,
+  Skill,
+  SkillsStatisticsDto,
+  UserDto,
 } from 'common/types/types';
-import {
-  its as itsService,
-  user as userService,
-  statistics as statisticsService,
-} from 'services/services';
 import { lesson as lessonRepository } from 'data/repositories/repositories';
 import { HttpError } from 'exceptions/exceptions';
 import {
@@ -34,6 +29,11 @@ import {
   mapLessonResultToSkillLevelsPayload,
   mapLessonsToNextStudyPlanLessonPayload,
 } from 'helpers/helpers';
+import {
+  its as itsService,
+  statistics as statisticsService,
+  user as userService,
+} from 'services/services';
 
 type Constructor = {
   lessonRepository: typeof lessonRepository;
@@ -155,9 +155,8 @@ class Lesson {
       });
     }
 
-    const currentSkillLevels = await this._userService.getCurrentSkillLevels(
-      userId,
-    );
+    const currentSkillLevels =
+      await this._userService.getCurrentSkillLevels(userId);
 
     const skillLevelsPayload = mapLessonResultToSkillLevelsPayload({
       lesson,
@@ -171,9 +170,9 @@ class Lesson {
 
     const resultSkillLevels = isTestLesson
       ? await this._itsService.irt({
-        skills: skillLevelsPayload,
-        lessonName: lesson.name,
-      })
+          skills: skillLevelsPayload,
+          lessonName: lesson.name,
+        })
       : await this._itsService.bkt(skillLevelsPayload);
 
     await this._userService.updateSkillLevels(
@@ -187,6 +186,7 @@ class Lesson {
     const lessonBestSkill = calculateLessonBestSkill(
       currentSkillLevels,
       resultSkillLevels,
+      lesson.skills.map((s) => s.id),
     );
 
     const lessonAverageSpeed = calculateLessonAverageSpeed(
@@ -218,8 +218,8 @@ class Lesson {
       await this._lessonRepository.getLastStudyPlanItemPriority(userId);
 
     if (
-      (isLastTestLesson || !isTestLesson) &&
-      lastStudyPlanLessonId === lessonId
+      isLastTestLesson ||
+      (!isTestLesson && lastStudyPlanLessonId === lessonId)
     ) {
       const lastFinishedLessonIds =
         await this._lessonRepository.getLastNFinishedIds(userId, 5);
@@ -227,11 +227,14 @@ class Lesson {
       const systemLessons =
         await this._lessonRepository.getSystemWithoutTestWithSkills();
 
+      const updatedSkillLevels =
+        await this._userService.getCurrentSkillLevels(userId);
+
       const nextStudyPlanLessonPayload = mapLessonsToNextStudyPlanLessonPayload(
         {
           lastFinishedLessons: lastFinishedLessonIds,
           systemLessons,
-          skillLevels: currentSkillLevels,
+          skillLevels: updatedSkillLevels,
         },
       );
 

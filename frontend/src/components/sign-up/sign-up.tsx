@@ -8,7 +8,7 @@ import { FC, RegisterRequestDto } from 'common/types/types';
 import { FormField, Link, Sign } from 'components/common/common';
 import {
   useDispatch,
-  useSelector,
+  useShallowSelector,
   useNavigate,
   useEffect,
   useForm,
@@ -19,7 +19,7 @@ import { signUpSchema } from 'validation-schemas/validation-schemas';
 const SignUp: FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { authError, user, isSignUpLoading } = useSelector(
+  const { authError, user, isSignUpLoading } = useShallowSelector(
     ({ auth, requests }) => ({
       authError: auth.error,
       user: auth.user,

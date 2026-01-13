@@ -18,37 +18,40 @@ const mapLessonResultToSkillLevelsPayload = ({
   timestamps,
   currentSkillLevels,
 }: MapLessonResultItsPayload): SkillLessonStatistics[] => {
-  return lesson.skills.map(({ id, name, count }) => {
-    const pKnown = currentSkillLevels.find((skill) => id === skill.id)
-      ?.level as number;
+  return lesson.skills.map(({ id, name }) => {
+    const pKnown =
+      (currentSkillLevels.find((skill) => id === skill.id)?.level as number) ??
+      0;
 
-    const startIndexes = [
-      ...lesson.content.matchAll(new RegExp(name, 'gi')),
-    ].map((result) => result.index);
+    const startIndexes = [...lesson.content.matchAll(new RegExp(name, 'gi'))]
+      .map((result) => result.index)
+      .filter((x): x is number => x !== undefined);
 
-    const indexes = startIndexes.reduce((indexes, index) => {
-      const nextIndexes = [...name].map((_, i) => i + index);
-      return indexes.concat(nextIndexes);
-    }, [] as number[]);
+    const m = startIndexes.filter((start) => {
+      for (let j = 0; j < name.length; j++) {
+        if (misclicks[start + j]) return true;
+      }
+      return false;
+    }).length;
 
-    const m = misclicks.filter(
-      (value, i) => indexes.includes(i) && value,
-    ).length;
+    const deltas: number[] = [];
+    for (const start of startIndexes) {
+      for (let j = 0; j < name.length; j++) {
+        const idx = start + j;
+        const dt = timestamps[idx + 1] - timestamps[idx];
+        if (Number.isFinite(dt)) deltas.push(dt);
+      }
+    }
 
-    const skillTimestamps = indexes.map(
-      (index) => timestamps[index + 1] - timestamps[index],
-    );
-
-    const skillTimestampsSum = skillTimestamps.reduce(
-      (partSum, value) => partSum + value,
-      0,
-    );
-    const t = skillTimestampsSum / skillTimestamps.length;
+    const t =
+      deltas.length > 0
+        ? deltas.reduce((sum, v) => sum + v, 0) / deltas.length
+        : 0;
 
     return {
       m,
       t,
-      n: count,
+      n: startIndexes.length,
       skillId: id,
       pKnown,
     };

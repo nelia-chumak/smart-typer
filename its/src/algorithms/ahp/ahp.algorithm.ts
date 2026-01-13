@@ -1,4 +1,3 @@
-import * as math from 'mathjs';
 import { AhpPayload, AhpResult } from 'common/types/types.js';
 import {
   calculateAcceptableAlternatives,
@@ -11,9 +10,15 @@ import {
   checkConsistency,
   findLessonWithMaxWorstSkillCount,
 } from 'helpers/helpers.js';
+import * as math from 'mathjs';
 
 const ahp = (payload: AhpPayload): AhpResult => {
   const { lessons, lastFinishedLessonIds, skillLevels } = payload;
+
+  if (lessons.length === 1) {
+    return { lessonId: lessons[0].lessonId };
+  }
+
   const criterionMpc = calculateCriterionPairwiseComparisonMatrix(skillLevels);
   const alternativeMpcs = calculateAlternativePairwiseComparisonMatrices(
     lessons,

@@ -6,7 +6,7 @@ import {
   useEffect,
   useNavigate,
   useParams,
-  useSelector,
+  useShallowSelector,
   useState,
 } from 'hooks/hooks';
 import { lessons as lessonsActions } from 'store/modules/actions';
@@ -17,7 +17,7 @@ import styles from './styles.module.scss';
 
 const Lesson: FC = () => {
   const { user, isLoadCurrentRoomFailed, isSoundTurnedOn, currentLesson } =
-    useSelector(({ racing, auth, settings, lessons }) => ({
+    useShallowSelector(({ racing, auth, settings, lessons }) => ({
       user: auth.user,
       currentRoom: racing.currentRoom,
       isLoadCurrentRoomFailed: racing.isLoadCurrentRoomFailed,

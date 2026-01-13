@@ -7,6 +7,7 @@ import {
   Statistics as StatisticsModel,
   User as UserModel,
   UserToFinishedLesson as UserToFinishedLessonModel,
+  UserToStudyPlanLesson as UserToStudyPlanLessonModel,
 } from 'data/models/models';
 
 import { Lesson } from './lesson/lesson.repository';
@@ -29,7 +30,11 @@ const skill = new Skill({ SkillModel });
 
 const room = new Room({ RoomModel });
 
-const lesson = new Lesson({ LessonModel, UserToFinishedLessonModel });
+const lesson = new Lesson({
+  LessonModel,
+  UserToFinishedLessonModel,
+  UserToStudyPlanLessonModel,
+});
 
 const user = new User({
   UserModel,

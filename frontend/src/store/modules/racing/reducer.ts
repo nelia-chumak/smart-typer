@@ -106,7 +106,7 @@ const { reducer } = createSlice({
           const participantId = action.payload;
           const { participants } = state.currentRoom;
           const updatedParticipants = participants.filter(
-            (participant) => participant.id === participantId,
+            (participant) => participant.id !== participantId,
           );
           state.currentRoom = {
             ...state.currentRoom,

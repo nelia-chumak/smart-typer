@@ -9,7 +9,8 @@ import {
   useMemo,
   useNavigate,
   useParams,
-  useSelector,
+  useRef,
+  useShallowSelector,
   useState,
 } from 'hooks/hooks';
 import {
@@ -29,7 +30,7 @@ const Room: FC = () => {
     isLoadCurrentRoomFailed,
     isSoundTurnedOn,
     lesson,
-  } = useSelector(({ racing, auth, settings, lessons }) => ({
+  } = useShallowSelector(({ racing, auth, settings, lessons }) => ({
     user: auth.user,
     currentRoom: racing.currentRoom,
     isLoadCurrentRoomFailed: racing.isLoadCurrentRoomFailed,
@@ -115,9 +116,6 @@ const Room: FC = () => {
       );
       return;
     }
-    if (gameTimerValue === quatre || gameTimerValue === 3 * quatre) {
-      void dispatch(racingActions.loadCommentatorText(CommentatorEvent.JOKE));
-    }
     if (gameTimerValue === 2 * quatre) {
       void dispatch(
         racingActions.loadCommentatorText(CommentatorEvent.GAME_MIDDLE),
@@ -137,21 +135,13 @@ const Room: FC = () => {
   };
 
   const handleCommentatorTextChange = (): void => {
-    if (!commentatorText) {
-      return;
-    }
+    if (!commentatorText || !isSoundTurnedOn) return;
     speechSynthesis.cancel();
-    if (isSoundTurnedOn) {
-      const utterance = new SpeechSynthesisUtterance(commentatorText);
-      setTimeout(() => {
-        utterance.voice = speechSynthesis
-          .getVoices()
-          .find(
-            (voice) => voice.voiceURI === VOICE_URI,
-          ) as SpeechSynthesisVoice;
-        speechSynthesis.speak(utterance);
-      }, 0);
+    const utterance = new SpeechSynthesisUtterance(commentatorText);
+    if (voiceRef.current) {
+      utterance.voice = voiceRef.current;
     }
+    speechSynthesis.speak(utterance);
   };
 
   useEffect(() => {
@@ -169,8 +159,57 @@ const Room: FC = () => {
 
   useEffect(handleCommentatorTextChange, [commentatorText]);
 
+  const voiceRef = useRef<SpeechSynthesisVoice | null>(null);
+
+  const preloadVoice = (voiceURI: string): void => {
+    const pick = (): SpeechSynthesisVoice | null => {
+      const voices = speechSynthesis.getVoices();
+      if (!voices.length) return null;
+      return (
+        voices.find((v) => v.voiceURI === voiceURI) ??
+        voices.find((v) => v.lang?.toLowerCase().startsWith('en')) ??
+        voices[0] ??
+        null
+      );
+    };
+
+    const set = (): void => {
+      const v = pick();
+      if (v) voiceRef.current = v;
+    };
+
+    set();
+
+    const onChanged = (): void => {
+      set();
+      if (voiceRef.current) {
+        speechSynthesis.removeEventListener('voiceschanged', onChanged);
+      }
+    };
+
+    if (!voiceRef.current) {
+      speechSynthesis.addEventListener('voiceschanged', onChanged);
+
+      window.setTimeout(() => {
+        speechSynthesis.removeEventListener('voiceschanged', onChanged);
+        set();
+      }, 1000);
+    }
+  };
+
   useEffect(() => {
+    preloadVoice(VOICE_URI);
+
+    const loadJoke = (): void => {
+      void dispatch(racingActions.loadCommentatorText(CommentatorEvent.JOKE));
+    };
+
+    loadJoke();
+
+    const id = window.setInterval(loadJoke, 60000);
+
     return (): void => {
+      window.clearInterval(id);
       speechSynthesis.cancel();
       void dispatch(racingActions.leaveRoom({ roomId, participantId: userId }));
       dispatch(racingActions.resetAllExceptPersonal());

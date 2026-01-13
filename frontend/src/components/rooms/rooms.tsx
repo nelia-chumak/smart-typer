@@ -1,7 +1,12 @@
 import { SpinnerSize } from 'common/enums/enums';
 import { CreateRoomRequestDto, FC } from 'common/types/types';
 import { Button, Spinner } from 'components/common/common';
-import { useDispatch, useEffect, useSelector, useState } from 'hooks/hooks';
+import {
+  useDispatch,
+  useEffect,
+  useShallowSelector,
+  useState,
+} from 'hooks/hooks';
 import { racing as racingActions } from 'store/modules/actions';
 import {
   CreateRoomModal,
@@ -19,7 +24,7 @@ const Rooms: FC = () => {
     areRoomsLoading,
     isRoomCreating,
     isRoomUrlSending,
-  } = useSelector(({ racing, requests }) => ({
+  } = useShallowSelector(({ racing, requests }) => ({
     rooms: racing.availableRooms,
     shareRoomUrl: racing.shareRoomUrl,
     areRoomsLoading: requests.racingLoadAvailableRooms,

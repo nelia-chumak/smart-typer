@@ -1,17 +1,18 @@
-import { RCBar } from 'components/external/external';
 import {
-  Chart,
-  LinearScale,
-  CategoryScale,
   BarElement,
+  CategoryScale,
+  Chart,
+  Legend,
+  LinearScale,
   LineElement,
   Title,
   Tooltip,
-  Legend,
+  TooltipItem,
 } from 'chart.js';
-import { Modal, UserLabel } from 'components/common/common';
-import { FC, Rating, VoidAction } from 'common/types/types';
 import { AvatarSize } from 'common/enums/enums';
+import { FC, Rating, VoidAction } from 'common/types/types';
+import { Modal, UserLabel } from 'components/common/common';
+import { RCBar } from 'components/external/external';
 
 import styles from './styles.module.scss';
 
@@ -42,17 +43,29 @@ const ResultsModal: FC<Props> = ({
   const participantsAverageSpeeds = participantsRating.map(
     ({ averageSpeed }) => averageSpeed,
   );
-  const maxSpeed = Math.max.apply(null, participantsAverageSpeeds);
+  const maxSpeed = Math.max(...participantsAverageSpeeds);
+  const niceStep = (max: number): number => {
+    if (max <= 5) return 0.5;
+    if (max <= 20) return 1;
+    if (max <= 50) return 2;
+    if (max <= 100) return 5;
+    return 10;
+  };
+
+  const stepSize = niceStep(maxSpeed);
+  const maxY = Math.ceil(maxSpeed / stepSize) * stepSize;
 
   const data = {
     labels: participantsNicknames,
     datasets: [
       {
-        data: [12, 343, 223, 34, 34],
-        // participantsAverageSpeeds,
+        data: participantsAverageSpeeds,
         backgroundColor: '#4bba73',
-        borderWidth: 4,
+        borderWidth: 0,
         borderColor: '#4bba73',
+        borderRadius: 8,
+        barPercentage: 0.75,
+        categoryPercentage: 0.8,
       },
     ],
   };
@@ -62,13 +75,20 @@ const ResultsModal: FC<Props> = ({
       legend: {
         display: false,
       },
+      tooltip: {
+        callbacks: {
+          label: (ctx: TooltipItem<'bar'>): string =>
+            `Average speed: ${ctx.parsed.y}`,
+        },
+      },
     },
     scales: {
       y: {
+        beginAtZero: true,
         min: 0,
-        max: maxSpeed + 1 - (maxSpeed % 1),
+        max: maxY,
         ticks: {
-          stepSize: 0.5,
+          stepSize,
           font: {
             size: 16,
           },
@@ -89,6 +109,7 @@ const ResultsModal: FC<Props> = ({
       },
     },
     responsive: true,
+    maintainAspectRatio: false,
   };
 
   return (

@@ -30,14 +30,16 @@
     margin: 0 auto;
   }
 
-  .typedSymbol {
-    &.correctTyped {
-      background-color: rgba($main-green, 0.7);
-    }
+  .correctTyped {
+    background-color: rgba($main-green, 0.7);
+  }
 
-    &.incorrectTyped {
-      background-color: rgba($main-red, 0.7);
-    }
+  .correctedTyped {
+    background-color: rgba($main-orange, 0.7);
+  }
+
+  .incorrectTyped {
+    background-color: rgba($main-red, 0.7);
   }
 
   .readyButton {

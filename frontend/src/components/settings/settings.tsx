@@ -14,7 +14,7 @@ import {
 } from 'components/common/common';
 import { RBForm } from 'components/external/external';
 import { clsx } from 'helpers/helpers';
-import { useDispatch, useForm, useSelector } from 'hooks/hooks';
+import { useDispatch, useForm, useShallowSelector } from 'hooks/hooks';
 import { settings as settingsActions } from 'store/modules/actions';
 import { updateSettingsSchema } from 'validation-schemas/validation-schemas';
 
@@ -29,7 +29,7 @@ const Settings: FC = () => {
     isShownInRating,
     isSoundTurnedOn,
     isUpdateLoading,
-  } = useSelector(({ settings, requests }) => ({
+  } = useShallowSelector(({ settings, requests }) => ({
     gameTime: settings.gameTime,
     countdownBeforeGame: settings.countdownBeforeGame,
     hasEmailNotifications: settings.hasEmailNotifications,

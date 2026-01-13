@@ -32,7 +32,7 @@ import {
   useNavigate,
   useParams,
   useRef,
-  useSelector,
+  useShallowSelector,
   useState,
 } from 'hooks/hooks';
 import { notification as notificationService } from 'services/services';
@@ -56,7 +56,7 @@ const Profile: FC = () => {
     isPersonalInfoUpdateLoading,
     isAvatarUpdateLoading,
     isAvatarDeleteLoading,
-  } = useSelector(({ auth, profile, requests }) => ({
+  } = useShallowSelector(({ auth, profile, requests }) => ({
     currentUserId: auth.user?.id,
     user: profile.user,
     statistics: profile.statistics,

@@ -39,6 +39,12 @@ const CreateRoomModal: FC<Props> = ({
     onClose();
   };
 
+  const handleFormSubmit = (data: CreateRoomRequestDto): void => {
+    onSubmit(data);
+    reset();
+    onClose();
+  };
+
   return (
     <Modal
       isVisible={isVisible}
@@ -50,7 +56,7 @@ const CreateRoomModal: FC<Props> = ({
       submitButton={{
         label: 'Save',
         isDisabled: isSubmitting,
-        onClick: () => void handleSubmit(onSubmit)(),
+        onClick: () => void handleSubmit(handleFormSubmit)(),
       }}
       title="Create new room"
       className={styles.createRoomModal}

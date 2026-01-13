@@ -115,10 +115,10 @@ const LessonCard: FC<Props> = ({
               </div>
               {!!bestSkill && (
                 <div className={styles.bestSkillMarkers}>
-                  {[...bestSkill].map((symbol) => (
+                  {[...bestSkill].map((symbol, symbolIndex) => (
                     <Button
                       onClick={handleArMarkerClick(symbol as AlphabetLetter)}
-                      key={symbol}
+                      key={`${id}-${symbol}-${symbolIndex}`}
                       className={styles.arMarkerButton}
                     >
                       <img

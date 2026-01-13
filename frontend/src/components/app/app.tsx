@@ -3,28 +3,27 @@ import { FC } from 'common/types/types';
 import { ProtectedRoute, WithHeader } from 'components/common/common';
 import {
   Home,
+  Lesson,
   Lessons,
   LogIn,
   LogInGoogle,
   Profile,
   Racing,
   ResetPassword,
+  Room,
   Rooms,
   SetPassword,
   Settings,
   SignUp,
   StudyPlan,
   Theory,
-  Room,
-  Lesson,
 } from 'components/components';
 import { RRDRoute, RRDRoutes } from 'components/external/external';
 import {
   useDispatch,
   useEffect,
   useLocation,
-  useSelector,
-  useState,
+  useShallowSelector,
 } from 'hooks/hooks';
 import { localStorage as localStorageService } from 'services/services';
 import { auth as authActions } from 'store/modules/actions';
@@ -32,7 +31,7 @@ import { auth as authActions } from 'store/modules/actions';
 const App: FC = () => {
   const dispatch = useDispatch();
   const { pathname } = useLocation();
-  const { user, isUserRequestLoading } = useSelector(
+  const { user, isUserRequestLoading } = useShallowSelector(
     ({ auth, requests }) => ({
       user: auth.user,
       isUserRequestLoading: requests.authLoadCurrentUser,
@@ -47,19 +46,15 @@ const App: FC = () => {
     AppRoute.LOG_IN_GOOGLE,
   ] as string[];
   const isAuth = authRoutes.includes(pathname);
-  const needToLoadUser = !!token && !user && !isAuth;
-
-  const [isUserLoading, setIsUserLoading] = useState(needToLoadUser);
+  const shouldFetchUser = !!token && !user && !isAuth;
 
   useEffect(() => {
-    if (needToLoadUser) {
+    if (shouldFetchUser) {
       void dispatch(authActions.loadCurrentUser());
     }
-  }, []);
+  }, [shouldFetchUser]);
 
-  useEffect(() => {
-    setIsUserLoading(isUserRequestLoading);
-  }, [isUserRequestLoading, user]);
+  const isUserLoading = shouldFetchUser || isUserRequestLoading;
 
   return (
     <RRDRoutes>

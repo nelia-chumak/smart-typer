@@ -13,33 +13,44 @@ type Lessons = {
   level: AhpSkillLevel['level'];
 }[];
 
+const MIN = 1 / 9;
+const MAX = 9;
+
 const calculateAlternativePairwiseComparisonMatrix = (
   lessons: Lessons,
 ): PairwiseComparisonMatrix => {
-  const matrix: PairwiseComparisonMatrix = Array.from(
-    { length: lessons.length },
-    () => Array.from({ length: lessons.length }, () => 0),
+  const n = lessons.length;
+
+  const matrix: PairwiseComparisonMatrix = Array.from({ length: n }, () =>
+    Array.from({ length: n }, () => 1),
   );
 
-  for (let i = 0; i < lessons.length; i++) {
-    const firstLesson = lessons[i];
-    const firstPriorityCoefficient = calculatePriorityCoefficient(
-      firstLesson.level,
-      firstLesson.contentType,
-    );
-    for (let j = 0; j < lessons.length; j++) {
-      const secondLesson = lessons[j];
-      if (secondLesson.count === 0) {
-        matrix[i][j] = 0;
+  for (let i = 0; i < n; i++) {
+    const a = lessons[i];
+    const aCoeff = calculatePriorityCoefficient(a.level, a.contentType);
+    const aValue = a.count * aCoeff;
+
+    for (let j = i + 1; j < n; j++) {
+      const b = lessons[j];
+      const bCoeff = calculatePriorityCoefficient(b.level, b.contentType);
+      const bValue = b.count * bCoeff;
+
+      let ratio: number;
+
+      if (aValue === 0 && bValue === 0) {
+        ratio = 1;
+      } else if (bValue === 0) {
+        ratio = MAX;
+      } else if (aValue === 0) {
+        ratio = MIN;
       } else {
-        const secondPriorityCoefficient = calculatePriorityCoefficient(
-          secondLesson.level,
-          secondLesson.contentType,
-        );
-        matrix[i][j] =
-          (firstLesson.count * firstPriorityCoefficient) /
-          (secondLesson.count * secondPriorityCoefficient);
+        ratio = aValue / bValue;
       }
+
+      ratio = Math.min(MAX, Math.max(MIN, ratio));
+
+      matrix[i][j] = ratio;
+      matrix[j][i] = 1 / ratio;
     }
   }
 

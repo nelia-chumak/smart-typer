@@ -5,6 +5,7 @@ import {
   ShareUrlKey,
 } from 'common/enums/enums';
 import {
+  ClassNames,
   FC,
   SendRoomUrlToEmailsRequestDto,
   ShareRoomUrlDto,
@@ -16,7 +17,7 @@ import { Button, FormField, Modal } from 'components/common/common';
 
 import { ReactTags } from 'components/external/external';
 import { clsx, replaceRouteIdParam } from 'helpers/helpers';
-import { useDispatch, useForm, useNavigate, useState } from 'hooks/hooks';
+import { useDispatch, useForm, useMemo, useNavigate } from 'hooks/hooks';
 import { racing as racingActions } from 'store/modules/actions';
 import { sendShareRoomUrlSchema } from 'validation-schemas/validation-schemas';
 
@@ -37,7 +38,6 @@ const ShareRoomModal: FC<Props> = ({
   shareRoomUrl,
   isRoomUrlSending,
 }) => {
-  const [emailsInputFocused, setEmailsInputFocused] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -49,7 +49,10 @@ const ShareRoomModal: FC<Props> = ({
   const emails = watch(ShareUrlKey.EMAILS);
 
   const setEmails = (next: Emails): void => {
-    setValue(ShareUrlKey.EMAILS as keyof SendRoomUrlToEmailsRequestDto, next);
+    setValue(ShareUrlKey.EMAILS as keyof SendRoomUrlToEmailsRequestDto, next, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
   };
 
   const handleSend = (data: SendRoomUrlToEmailsRequestDto): void => {
@@ -63,12 +66,14 @@ const ShareRoomModal: FC<Props> = ({
   }) => (
     <button
       type="button"
-      className={clsx(classNames.tag, styles.email)}
+      className={clsx(classNames.tag, styles.emailTag)}
       data-tag
       {...buttonProps}
     >
-      <span className={classNames.tagName}>{tag.label}</span>
-      <span data-tag-handle aria-hidden>
+      <span className={clsx(classNames.tagName, styles.emailTagName)}>
+        {tag.label}
+      </span>
+      <span className={styles.emailTagRemove} aria-hidden>
         ×
       </span>
     </button>
@@ -80,14 +85,13 @@ const ShareRoomModal: FC<Props> = ({
     navigate(route);
   };
 
-  const selected: Tag[] = (emails ?? []).map((e) => ({ value: e, label: e }));
-
   const handleValidateEmail = (email: string): boolean => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim());
   };
 
   const handleAdd = (tag: Tag): void => {
-    const email = (tag.label ?? '').trim();
+    const raw = (tag.value ?? tag.label ?? '').toString();
+    const email = raw.trim();
     if (!email) return;
     if (!handleValidateEmail(email)) return;
     if ((emails ?? []).includes(email)) return;
@@ -98,11 +102,34 @@ const ShareRoomModal: FC<Props> = ({
     setEmails((emails ?? []).filter((_, i) => i !== index));
   };
 
-  const handleToggleEmailsInputFocus = (): void => {
-    setEmailsInputFocused((prev) => !prev);
-  };
+  const selected = useMemo(
+    () => (emails ?? []).map((e) => ({ value: e, label: e })),
+    [emails],
+  );
 
   const suggestions: Tag[] = [];
+
+  const classNames = useMemo(
+    () =>
+      ({
+        root: styles.emailsRoot,
+        rootIsActive: styles.emailsRootActive,
+        rootIsDisabled: '',
+        rootIsInvalid: '',
+        label: styles.label,
+        tagList: styles.tagList,
+        tagListItem: '',
+        tag: '',
+        tagName: '',
+        comboBox: styles.comboBox,
+        input: styles.input,
+        listBox: styles.listBox,
+        option: styles.option,
+        optionIsActive: styles.optionActive,
+        highlight: '',
+      }) as ClassNames,
+    [],
+  );
 
   return (
     <Modal
@@ -128,31 +155,26 @@ const ShareRoomModal: FC<Props> = ({
         type={FormFieldType.TEXT}
         className={styles.shareRoomUrlField}
       />
+
       <FormField
         label={FormFieldLabel.EMAILS}
         type={FormFieldType.CUSTOM}
         note={<span>* correctly entered emails are greyed out</span>}
       >
-        <div
-          className={clsx(
-            styles.emailsInput,
-            emailsInputFocused && styles.focused,
-          )}
-          onFocusCapture={handleToggleEmailsInputFocus}
-          onBlurCapture={handleToggleEmailsInputFocus}
-        >
-          <ReactTags
-            suggestions={suggestions}
-            selected={selected}
-            onAdd={handleAdd}
-            onDelete={handleDelete}
-            onValidate={handleValidateEmail}
-            allowNew
-            placeholderText="Enter emails which you want to send link to"
-            renderTag={handleRenderTag}
-          />
-        </div>
+        <ReactTags
+          labelText=""
+          suggestions={suggestions}
+          selected={selected}
+          onAdd={handleAdd}
+          onDelete={handleDelete}
+          onValidate={handleValidateEmail}
+          allowNew
+          placeholderText="Enter emails which you want to send link to"
+          renderTag={handleRenderTag}
+          classNames={classNames}
+        />
       </FormField>
+
       <Button
         onClick={() => void handleSubmit(handleSend)()}
         className={styles.sendButton}

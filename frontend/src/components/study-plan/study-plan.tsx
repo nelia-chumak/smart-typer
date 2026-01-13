@@ -1,7 +1,12 @@
 import { AlphabetLetter, SpinnerSize } from 'common/enums/enums';
 import { FC } from 'common/types/types';
 import { Spinner, LessonCard, ArMarkerModal } from 'components/common/common';
-import { useDispatch, useEffect, useSelector, useState } from 'hooks/hooks';
+import {
+  useDispatch,
+  useEffect,
+  useShallowSelector,
+  useState,
+} from 'hooks/hooks';
 import { lessons as lessonsActions } from 'store/modules/actions';
 
 import styles from './styles.module.scss';
@@ -12,7 +17,7 @@ const StudyPlan: FC = () => {
     studyPlanLessons,
     areStudyPlanLessonsLoading,
     isNextLessonGenerating,
-  } = useSelector(({ lessons, requests }) => ({
+  } = useShallowSelector(({ lessons, requests }) => ({
     studyPlanLessons: lessons.studyPlan,
     areStudyPlanLessonsLoading: requests.lessonsLoadStudyPlan,
     isNextLessonGenerating: requests.lessonSendLessonResult,

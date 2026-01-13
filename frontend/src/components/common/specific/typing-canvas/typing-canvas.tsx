@@ -11,16 +11,16 @@ import {
 } from 'common/enums/enums';
 import {
   FC,
+  KeyboardEvent,
   Participant,
   SettingsDto,
-  UserDto,
-  KeyboardEvent,
-  VoidAction,
   SkillsStatisticsDto,
+  UserDto,
+  VoidAction,
 } from 'common/types/types';
 import { Button } from 'components/common/common';
-import { useEffect, useRef, useSound, useState } from 'hooks/hooks';
 import { clsx } from 'helpers/helpers';
+import { useEffect, useRef, useSound, useState } from 'hooks/hooks';
 import { setTimer } from './helpers/helpers';
 
 import styles from './styles.module.scss';
@@ -72,9 +72,11 @@ const TypingCanvas: FC<Props> = ({
     countdownBeforeGame: defaultCountdownBeforeGame,
   } = DEFAULT_SETTINGS;
 
-  const gameTimerInitialValue = isGameMode ? gameTime ?? defaultGameTime : null;
+  const gameTimerInitialValue = isGameMode
+    ? (gameTime ?? defaultGameTime)
+    : null;
   const timerBeforeTypingInitialValue = isGameMode
-    ? countdownBeforeGame ?? defaultCountdownBeforeGame
+    ? (countdownBeforeGame ?? defaultCountdownBeforeGame)
     : DEFAULT_COUNTDOWN_BEFORE_LESSON;
 
   const [isStarted, setIsStarted] = useState(!isGameMode);
@@ -89,38 +91,49 @@ const TypingCanvas: FC<Props> = ({
 
   const { position, spentTime, isReady } = currentParticipant ?? {};
 
-  const [playError] = useSound(`${process.env.PUBLIC_URL}/sound/error.mp3`, {
-    volume: 0.25,
-  });
-  const [playClockTick] = useSound(
-    `${process.env.PUBLIC_URL}/sound/clock-tick.mp3`,
+  const [playError] = useSound(
+    `${import.meta.env.VITE_PUBLIC_URL}/sound/error.mp3`,
     {
       volume: 0.25,
+    },
+  );
+  const [playClockTick] = useSound(
+    `${import.meta.env.VITE_PUBLIC_URL}/sound/clock-tick.mp3`,
+    {
+      volume: 0.25,
+      interrupt: true,
     },
   );
   const [playClockRing] = useSound(
-    `${process.env.PUBLIC_URL}/sound/clock-ring.mp3`,
+    `${import.meta.env.VITE_PUBLIC_URL}/sound/clock-ring.mp3`,
     {
       volume: 0.25,
     },
   );
+
+  const playClockTickRef = useRef(playClockTick);
+
+  useEffect(() => {
+    playClockTickRef.current = playClockTick;
+  }, [playClockTick]);
+
   const pageRef = useRef<HTMLDivElement | null>(null);
 
   const handleDecreaseTimerBeforeTypingValue = (timerValue: number): void => {
-    if (timerValue >= 0) {
+    if (timerValue !== timerBeforeTypingValue) {
       setTimerBeforeTypingValue(timerValue);
-      if (isSoundTurnedOn) {
-        playClockTick();
-      }
+    }
+    if (isSoundTurnedOn && timerValue > 0) {
+      playClockTickRef.current();
     }
   };
 
   const handleDecreaseGameTimerValue = (timerValue: number): void => {
-    if (timerValue >= 0) {
+    if (timerValue !== gameTimerValue) {
       setGameTimerValue(timerValue);
-      if (isSoundTurnedOn) {
-        playClockTick();
-      }
+    }
+    if (isSoundTurnedOn && timerValue > 0) {
+      playClockTickRef.current();
     }
   };
 
@@ -134,8 +147,9 @@ const TypingCanvas: FC<Props> = ({
       return;
     }
 
-    const nextSymbol = (lessonContent as string)[position!];
-    const isRightSymbol = key === nextSymbol;
+    const currentSymbol = (lessonContent as string)[position!];
+
+    const isRightSymbol = key === currentSymbol;
     if (isRightSymbol) {
       onIncreasePosition();
     } else if (key !== 'Shift') {
@@ -182,23 +196,23 @@ const TypingCanvas: FC<Props> = ({
   };
 
   const handleStartedStateChange = (): void => {
-    if (isStarted && !spentTime) {
-      if (onLoadCommentatorText) {
-        onLoadCommentatorText();
-      }
+    const shouldStartTimerBeforeTypingCountdown = isStarted && !spentTime;
+    const shouldFinishGame = !isStarted && !!spentTime;
+
+    if (shouldStartTimerBeforeTypingCountdown) {
       if (isSoundTurnedOn) {
+        onLoadCommentatorText?.();
         playClockTick();
+
+        setTimeout(() => playClockTickRef.current(), 50);
       }
-      setTimer(
-        timerBeforeTypingValue,
-        handleDecreaseTimerBeforeTypingValue,
-      );
+
+      setTimer(timerBeforeTypingValue, handleDecreaseTimerBeforeTypingValue);
       return;
     }
-    if (!isStarted && spentTime) {
-      if (isSoundTurnedOn) {
-        playClockRing();
-      }
+
+    if (shouldFinishGame) {
+      if (isSoundTurnedOn) playClockRing();
       handleResetTimerValues();
       onResults();
     }
@@ -208,13 +222,16 @@ const TypingCanvas: FC<Props> = ({
     if (!timerBeforeTypingValue && isStarted) {
       onTypingStart();
       pageRef.current?.focus();
+
       if (isSoundTurnedOn) {
         playClockRing();
       }
+
       if (isGameMode) {
         if (isSoundTurnedOn) {
-          playClockTick();
+          setTimeout(() => playClockTickRef.current(), 50);
         }
+
         setTimer(gameTimerValue as number, handleDecreaseGameTimerValue);
       }
     }
@@ -229,9 +246,9 @@ const TypingCanvas: FC<Props> = ({
         }
       });
     }
-    if (gameTimerValue && onLoadCommentatorText) {
-      const quatre = gameTime ?? defaultGameTime / 4;
-      onLoadCommentatorText(gameTimerValue, quatre);
+    if (gameTimerValue && isSoundTurnedOn) {
+      const quatre = Math.round((gameTime ?? defaultGameTime) / 4);
+      onLoadCommentatorText?.(gameTimerValue, quatre);
     }
   };
 
@@ -262,17 +279,26 @@ const TypingCanvas: FC<Props> = ({
               </p>
             )}
             <p>
-              {[...lessonContent!].map((symbol, i) => (
-                <span
-                  key={i}
-                  className={clsx(
-                    position! > i && styles.typedSymbol,
-                    misclicks![i] ? styles.incorrectTyped : styles.correctTyped,
-                  )}
-                >
-                  {symbol}
-                </span>
-              ))}
+              {[...lessonContent!].map((symbol, i) => {
+                const isTyped = position! > i;
+                const isCurrent = i === position!;
+                const wasWrong = !!misclicks?.[i];
+
+                const isCurrentWrong = isCurrent && wasWrong;
+                const isTypedCorrected = isTyped && wasWrong;
+                const isTypedClean = isTyped && !wasWrong;
+
+                const className = clsx(
+                  isCurrentWrong && styles.incorrectTyped,
+                  isTypedCorrected && styles.correctedTyped,
+                  isTypedClean && styles.correctTyped,
+                );
+                return (
+                  <span key={i} className={className}>
+                    {symbol}
+                  </span>
+                );
+              })}
             </p>
           </>
         )

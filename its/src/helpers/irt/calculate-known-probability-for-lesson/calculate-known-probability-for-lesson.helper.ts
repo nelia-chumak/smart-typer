@@ -4,31 +4,36 @@ import {
   SkillWillLearnProbability,
 } from 'common/types/types.js';
 import { calculateLessonComplexity } from '../calculate-lesson-complexity/calculate-lesson-complexity.helper.js';
-import { solveEquation } from '../solve-equation/solve-equation.helper.js';
 
 type CalculateWillLearnProbabilityProps = {
   lessonName: IrtPayload['lessonName'];
   skills: SkillWillLearnProbability[];
 };
 
+const EPS = 1e-6;
+
+const sigmoid = (x: number): number => 1 / (1 + Math.exp(-x));
+
+const clampProbOpen = (p: number): number => {
+  if (p <= 0) return EPS;
+  if (p >= 1) return 1 - EPS;
+  return p;
+};
+
 const calculateKnownProbabilityForLesson = ({
   lessonName,
   skills,
 }: CalculateWillLearnProbabilityProps): SkillKnownProbabilityForLesson[] => {
-  return skills.map(({ skillId, pWillLearn }) => {
-    const complexity = calculateLessonComplexity(lessonName);
-    const knowledgeLevel = solveEquation(
-      `e^(x - ${complexity})/(1+e^(x - ${complexity})) - ${pWillLearn}`,
-      `e^(x - ${complexity})/(1+e^(x - ${complexity}))`,
-    );
-    const pKnownLesson = knowledgeLevel
-      ? knowledgeLevel / 5 + 0.5
-      : knowledgeLevel;
+  const complexity = calculateLessonComplexity(lessonName);
 
-    return {
-      skillId,
-      pKnownLesson,
-    };
+  return skills.map(({ skillId, pWillLearn }) => {
+    const p = clampProbOpen(pWillLearn);
+
+    const logit = Math.log(p / (1 - p));
+    const knowledgeLevel = complexity + logit;
+
+    const pKnownLesson = sigmoid(knowledgeLevel);
+    return { skillId, pKnownLesson };
   });
 };
 

@@ -40,32 +40,31 @@ class Racing {
     ActionType.LOAD_CURRENT_ROOM,
     async (
       payload: RoomIdDto,
-      { dispatch, extra: { services } },
+      { dispatch, getState, extra: { services } },
     ): Promise<void> => {
+      const {
+        racing: { personalRoom },
+        settings: { gameTime, countdownBeforeGame },
+      } = getState();
+      if (personalRoom?.id === payload.roomId) {
+        void dispatch(
+          this.setCurrentRoom({
+            ...personalRoom,
+            gameTime,
+            countdownBeforeGame,
+          }),
+        );
+        return;
+      }
       const { roomApi: roomApiService } = services;
       const room = await roomApiService.get(payload);
+
       void dispatch(this.setCurrentRoom(room));
     },
   );
 
   public resetIsLoadCurrentRoomFailed = createAction(
     ActionType.RESET_IS_LOAD_CURRENT_ROOM_FAILED,
-  );
-
-  public setPersonalRoomAsCurrent = createAsyncThunk(
-    ActionType.SET_PERSONAL_ROOM_AS_CURRENT,
-    (_: undefined, { dispatch, getState }): void => {
-      const {
-        racing: { personalRoom },
-        settings: { gameTime, countdownBeforeGame },
-      } = getState();
-      if (!personalRoom) {
-        return;
-      }
-      void dispatch(
-        this.setCurrentRoom({ ...personalRoom, gameTime, countdownBeforeGame }),
-      );
-    },
   );
 
   public setCurrentRoom = createAsyncThunk(
@@ -196,7 +195,7 @@ class Racing {
   );
 
   public loadCommentatorText = createAsyncThunk(
-    ActionType.SET_PERSONAL_ROOM_AS_CURRENT,
+    ActionType.SET_COMMENTATOR_TEXT,
     async (
       payload: CommentatorEvent,
       { getState, extra: { services } },

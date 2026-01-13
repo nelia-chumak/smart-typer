@@ -1,13 +1,13 @@
 import { FormFieldLabel, FormFieldType, UserKey } from 'common/enums/enums';
 import { FC, ResetPasswordRequestDto } from 'common/types/types';
 import { FormField, Sign } from 'components/common/common';
-import { useDispatch, useForm, useSelector } from 'hooks/hooks';
+import { useDispatch, useForm, useShallowSelector } from 'hooks/hooks';
 import { auth as authActions } from 'store/modules/actions';
 import { resetPasswordSchema } from 'validation-schemas/validation-schemas';
 
 const ResetPassword: FC = () => {
   const dispatch = useDispatch();
-  const { authError, isResetPasswordLoading } = useSelector(
+  const { authError, isResetPasswordLoading } = useShallowSelector(
     ({ auth, requests }) => ({
       authError: auth.error,
       isResetPasswordLoading: requests.authResetPassword,

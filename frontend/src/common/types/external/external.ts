@@ -8,7 +8,7 @@ export type {
   SingleValue,
   StylesConfig,
 } from 'react-select';
-export type { Tag, TagRenderer } from 'react-tag-autocomplete';
+export type { Tag, TagRenderer, ClassNames } from 'react-tag-autocomplete';
 
 export * from './app-middleware/app-middleware';
 export * from './async-thunk-options/async-thunk-options.type';
